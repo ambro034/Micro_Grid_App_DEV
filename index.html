@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Neighborhood Micro-Grid Manager</title>
 
     <style>
-
         :root {
             --bg-color: #0b0f19;
             --card-bg: #151f32;
@@ -19,6 +17,7 @@
             --blue-card: #0ea5e9;
             --danger: #f43f5e;
             --success: #10b981;
+            --purple: #8b5cf6;
         }
 
         body {
@@ -33,7 +32,7 @@
         }
 
         .container {
-            max-width: 950px;
+            max-width: 1100px;
             width: 100%;
             background: var(--card-bg);
             padding: 30px;
@@ -49,9 +48,13 @@
             letter-spacing: 0.5px;
         }
 
-        /* =====================================================
-           DASHBOARD
-           ===================================================== */
+        h3 {
+            margin-bottom: 10px;
+        }
+
+        /* =========================
+           GRID DASHBOARD
+           ========================= */
 
         .grid-dashboard {
             display: grid;
@@ -81,9 +84,9 @@
             margin-top: 5px;
         }
 
-        /* =====================================================
+        /* =========================
            BROWNOUT TRACKERS
-           ===================================================== */
+           ========================= */
 
         .brownout-trackers {
             display: flex;
@@ -117,9 +120,9 @@
             color: white;
         }
 
-        /* =====================================================
+        /* =========================
            SETUP
-           ===================================================== */
+           ========================= */
 
         .setup-box {
             background: #1e293b;
@@ -131,15 +134,67 @@
 
         .setup-section {
             background: #0f172a;
-            padding: 15px;
+            padding: 18px;
             border-radius: 10px;
+            margin-top: 15px;
             border: 1px solid var(--border);
+        }
+
+        .setup-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+        }
+
+        .setup-option input[type="radio"] {
+            width: auto;
+        }
+
+        .manual-settings {
             margin-top: 15px;
         }
 
-        .setup-section h4 {
-            margin-top: 0;
-            color: var(--primary);
+        .setting-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 12px;
+        }
+
+        .setting-item {
+            background: #1e293b;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .setting-item label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 7px;
+        }
+
+        .brownout-capacity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .brownout-setting {
+            background: #1e293b;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .brownout-setting label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
         }
 
         .flex-row {
@@ -148,27 +203,7 @@
             margin-top: 10px;
         }
 
-        .setup-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .setup-field {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .setup-field label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: bold;
-        }
-
-        input,
-        select {
+        input, select {
             background: #0f172a;
             color: white;
             border: 1px solid var(--border);
@@ -176,11 +211,14 @@
             border-radius: 8px;
             font-size: 15px;
             box-sizing: border-box;
-            width: 100%;
         }
 
         input[type="text"] {
             flex: 1;
+        }
+
+        input[type="number"] {
+            width: 100%;
         }
 
         button {
@@ -200,8 +238,8 @@
         }
 
         button:disabled {
-            cursor: not-allowed;
             opacity: 0.4;
+            cursor: not-allowed;
         }
 
         button.action-btn {
@@ -214,59 +252,9 @@
             background-color: #475569;
         }
 
-        .mode-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .mode-button {
-            flex: 1;
-            background: #334155;
-            color: white;
-            border: 2px solid var(--border);
-        }
-
-        .mode-button.selected {
-            background: var(--primary);
-            color: #0b0f19;
-            border-color: var(--primary);
-        }
-
-        .random-info {
-            background: #172554;
-            border: 1px solid #1d4ed8;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 15px;
-            color: #bfdbfe;
-            font-size: 0.9rem;
-        }
-
-        .brownout-inputs {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .brownout-input {
-            background: #1e293b;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .brownout-input label {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-        }
-
-        /* =====================================================
+        /* =========================
            ROUND BAR
-           ===================================================== */
+           ========================= */
 
         .round-bar {
             display: flex;
@@ -280,9 +268,9 @@
             gap: 15px;
         }
 
-        /* =====================================================
-           PLAYERS
-           ===================================================== */
+        /* =========================
+           PLAYER GRID
+           ========================= */
 
         .player-list {
             display: grid;
@@ -329,9 +317,9 @@
             font-weight: bold;
         }
 
-        /* =====================================================
-           SCORECARD
-           ===================================================== */
+        /* =========================
+           SCORE TABLE
+           ========================= */
 
         .scorecard-table {
             width: 100%;
@@ -357,95 +345,88 @@
             text-transform: uppercase;
         }
 
-        /* =====================================================
-           CARDS
-           ===================================================== */
+        /* =========================
+           CARD SELECTION AREA
+           ========================= */
 
-        .card-selection {
+        .purchase-area {
             margin-top: 15px;
-            background: #0f172a;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
         }
 
-        .card-selection h4 {
-            margin-top: 0;
+        .purchase-title {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: bold;
             margin-bottom: 10px;
         }
 
         .card-options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
             gap: 10px;
         }
 
-        .game-card {
+        .purchase-card {
+            border-radius: 10px;
             padding: 12px;
-            border-radius: 8px;
-            border: 2px solid var(--border);
-            background: #1e293b;
-            color: white;
-            text-align: left;
+            color: #000;
             cursor: pointer;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: transform 0.15s, opacity 0.15s;
         }
 
-        .game-card:hover:not(:disabled) {
-            border-color: var(--primary);
+        .purchase-card:hover {
+            transform: translateY(-2px);
         }
 
-        .game-card.goods:hover:not(:disabled) {
-            border-color: var(--yellow-card);
-        }
-
-        .game-card.solar:hover:not(:disabled) {
-            border-color: var(--blue-card);
-        }
-
-        .game-card:disabled {
-            opacity: 0.4;
+        .purchase-card.sold-out {
+            opacity: 0.35;
             cursor: not-allowed;
         }
 
-        .game-card-price {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 6px;
+        .goods-option {
+            background: var(--yellow-card);
         }
 
-        .game-card-details {
+        .solar-option {
+            background: var(--blue-card);
+            color: white;
+        }
+
+        .card-price {
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+
+        .card-stats {
             font-size: 0.8rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        .card-count {
             margin-top: 5px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
         }
 
-        .no-purchase-button {
+        .card-quantity {
+            font-size: 0.7rem;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .no-purchase-btn {
+            margin-top: 10px;
             width: 100%;
-            margin-bottom: 15px;
             background: #475569;
             color: white;
-            border: 2px solid #64748b;
         }
 
-        .no-purchase-button:hover {
-            background: #64748b;
-        }
-
-        /* =====================================================
+        /* =========================
            LOG
-           ===================================================== */
+           ========================= */
 
         .log-box {
             background: #0f172a;
             padding: 15px;
             border-radius: 10px;
-            max-height: 160px;
+            max-height: 180px;
             overflow-y: auto;
             font-family: monospace;
             font-size: 0.85rem;
@@ -459,9 +440,9 @@
             padding-bottom: 4px;
         }
 
-        /* =====================================================
-           END GAME
-           ===================================================== */
+        /* =========================
+           GAME END
+           ========================= */
 
         .game-ended {
             text-align: center;
@@ -471,12 +452,7 @@
             border: 2px dashed var(--danger);
         }
 
-        /* =====================================================
-           MOBILE
-           ===================================================== */
-
         @media (max-width: 700px) {
-
             .container {
                 padding: 15px;
             }
@@ -486,28 +462,16 @@
                 align-items: stretch;
             }
 
+            .setting-row {
+                grid-template-columns: 1fr;
+            }
+
             .flex-row {
                 flex-direction: column;
             }
-
-            .mode-buttons {
-                flex-direction: column;
-            }
-
-            .scorecard-table {
-                font-size: 0.75rem;
-            }
-
-            .scorecard-table th,
-            .scorecard-table td {
-                padding: 6px;
-            }
-
         }
-
     </style>
 </head>
-
 
 <body>
 
@@ -515,114 +479,64 @@
 
     <h1>⚡ Neighborhood Micro-Grid Manager ⚡</h1>
 
-
-    <!-- =====================================================
-         DASHBOARD
-         ===================================================== -->
+    <!-- ==========================================
+         CENTRAL GRID CONTROL BOARD
+         ========================================== -->
 
     <div class="grid-dashboard">
 
         <div class="dash-card">
-
-            <div class="dash-lbl">
-                Current Round
-            </div>
-
-            <div
-                id="dispRound"
-                class="dash-val"
-                style="color: var(--primary);">
-
+            <div class="dash-lbl">Current Round</div>
+            <div id="dispRound"
+                 class="dash-val"
+                 style="color: var(--primary);">
                 1
-
             </div>
-
         </div>
 
-
-        <!-- This dashboard item can be hidden during
-             randomized games -->
-
-        <div
-            id="demandDashboardCard"
-            class="dash-card">
-
-            <div class="dash-lbl">
-                Total Demand vs Capacity
-            </div>
-
-            <div
-                id="dispDemand"
-                class="dash-val">
-
+        <div class="dash-card" id="demandDashboardCard">
+            <div class="dash-lbl">Total Demand vs Capacity</div>
+            <div id="dispDemand" class="dash-val">
                 0 / 50 e
-
             </div>
-
         </div>
-
 
         <div class="dash-card">
-
-            <div class="dash-lbl">
-                Active System Fees
-            </div>
-
-            <div
-                id="dispFees"
-                class="dash-val">
-
+            <div class="dash-lbl">Active System Fees</div>
+            <div id="dispFees" class="dash-val">
                 $0 / rd
-
             </div>
-
         </div>
 
+        <div class="dash-card" id="brownoutDashboardCard">
+            <div class="dash-lbl">Brownouts Limit</div>
 
-        <!-- This dashboard item can be hidden during
-             randomized games -->
-
-        <div
-            id="brownoutDashboardCard"
-            class="dash-card">
-
-            <div class="dash-lbl">
-                Brownouts Limit
+            <div class="brownout-trackers">
+                <div id="bo1" class="bo-box">1</div>
+                <div id="bo2" class="bo-box">2</div>
+                <div id="bo3" class="bo-box">3</div>
+                <div id="bo4" class="bo-box">4</div>
+                <div id="bo5" class="bo-box">5</div>
+                <div id="bo6" class="bo-box">⏹</div>
             </div>
-
-            <div
-                id="brownoutDisplay"
-                class="brownout-trackers">
-            </div>
-
         </div>
 
     </div>
 
 
-    <!-- =====================================================
-         STEP 1: INITIALIZATION
-         ===================================================== -->
+    <!-- ==========================================
+         STEP 1: NEIGHBORHOOD INITIALIZATION PORTAL
+         ========================================== -->
 
-    <div
-        id="setupView"
-        class="setup-box">
+    <div id="setupView" class="setup-box">
 
-        <h3>
-            Neighborhood Initialization Portal
-        </h3>
+        <h3>Neighborhood Initialization Portal</h3>
 
-
-        <p style="
-            color: var(--text-muted);
-            margin-top:-10px;
-            font-size:0.9rem;
-        ">
-
+        <p style="color: var(--text-muted);
+                  margin-top:-10px;
+                  font-size:0.9rem;">
             Register the neighbors currently sitting at your table.
-            Then choose whether to establish the grid parameters
-            manually or randomize them.
-
+            Turn rotation shifts left automatically each round.
         </p>
 
 
@@ -630,206 +544,173 @@
 
         <div class="flex-row">
 
-            <input
-                type="text"
-                id="pNameInput"
-                placeholder="Neighbor Name...">
+            <input type="text"
+                   id="pNameInput"
+                   placeholder="Neighbor Name...">
 
             <button onclick="registerNeighbor()">
-
                 Add Neighbor
-
             </button>
 
         </div>
 
-
-        <div
-            id="interimList"
-            style="
-                margin-top:15px;
-                font-size:0.9rem;
-                color:var(--text-muted);
-            ">
+        <div id="interimList"
+             style="margin-top:15px;
+                    font-size:0.9rem;
+                    color:var(--text-muted);">
         </div>
 
 
-        <!-- GAME PARAMETER SETUP -->
+        <!-- GAME SETTINGS -->
 
         <div class="setup-section">
 
-            <h4>
-                ⚙️ Grid Parameter Setup
-            </h4>
+            <h3 style="margin-top:0;">
+                Grid Configuration
+            </h3>
 
-
-            <p style="
-                color:var(--text-muted);
-                font-size:0.9rem;
-            ">
-
-                Players may establish the grid parameters
-                themselves or allow the system to randomly
-                generate them.
-
+            <p style="color:var(--text-muted);
+                      font-size:0.9rem;">
+                Choose whether the grid parameters will be set by the
+                players or randomized by the system.
             </p>
 
 
-            <div class="mode-buttons">
+            <div class="setup-option">
 
-                <button
-                    id="manualModeButton"
-                    class="mode-button selected"
-                    onclick="setSetupMode('manual')">
+                <input type="radio"
+                       id="manualMode"
+                       name="gridMode"
+                       value="manual"
+                       checked
+                       onchange="toggleGridMode()">
 
-                    ✏️ Set Parameters Manually
-
-                </button>
-
-
-                <button
-                    id="randomModeButton"
-                    class="mode-button"
-                    onclick="setSetupMode('random')">
-
-                    🎲 Randomize Parameters
-
-                </button>
+                <label for="manualMode">
+                    <strong>Manual Configuration</strong>
+                    — Players determine the grid parameters.
+                </label>
 
             </div>
 
 
-            <!-- MANUAL SETUP -->
+            <div class="setup-option">
 
-            <div id="manualSetup">
+                <input type="radio"
+                       id="randomMode"
+                       name="gridMode"
+                       value="random"
+                       onchange="toggleGridMode()">
 
-                <div class="setup-grid">
+                <label for="randomMode">
+                    <strong>Randomized Configuration</strong>
+                    — The system randomly determines the grid parameters.
+                </label>
 
-                    <div class="setup-field">
+            </div>
 
-                        <label>
-                            Initial Grid Capacity
-                            (30–50 electrons)
+
+            <!-- MANUAL SETTINGS -->
+
+            <div id="manualSettings"
+                 class="manual-settings">
+
+                <div class="setting-row">
+
+                    <div class="setting-item">
+
+                        <label for="initialCapacity">
+                            Initial Grid Capacity (30–50 electrons)
                         </label>
 
-                        <input
-                            type="number"
-                            id="initialCapacityInput"
-                            min="30"
-                            max="50"
-                            value="50">
+                        <input type="number"
+                               id="initialCapacity"
+                               min="30"
+                               max="50"
+                               value="50">
 
                     </div>
 
 
-                    <div class="setup-field">
+                    <div class="setting-item">
 
-                        <label>
-                            Brownouts Before Blackout
-                            (1–6)
+                        <label for="brownoutLimit">
+                            Brownouts Before Blackout (1–6)
                         </label>
 
-                        <input
-                            type="number"
-                            id="brownoutLimitInput"
-                            min="1"
-                            max="6"
-                            value="4"
-                            onchange="generateBrownoutCapacityInputs()">
+                        <input type="number"
+                               id="brownoutLimit"
+                               min="1"
+                               max="6"
+                               value="4"
+                               onchange="updateBrownoutCapacityInputs()">
 
                     </div>
 
                 </div>
 
 
-                <div style="
-                    margin-top:20px;
-                    font-weight:bold;
-                ">
+                <div style="margin-top:18px;">
 
-                    Capacity Added After Each Brownout
+                    <label style="font-size:0.85rem;
+                                  color:var(--text-muted);
+                                  font-weight:bold;">
+
+                        CAPACITY ADDED AFTER EACH BROWNOUT
+                        (5–15 electrons)
+
+                    </label>
+
+                    <div id="brownoutCapacityInputs"
+                         class="brownout-capacity-grid">
+                    </div>
 
                 </div>
 
+            </div>
 
-                <p style="
-                    color:var(--text-muted);
-                    font-size:0.8rem;
-                ">
 
-                    Set the number of additional electrons added
-                    after each brownout. Each value must be
-                    between 5 and 15 electrons.
+            <!-- RANDOM MODE DESCRIPTION -->
+
+            <div id="randomSettings"
+                 style="display:none;
+                        margin-top:15px;
+                        padding:15px;
+                        background:#1e293b;
+                        border-radius:8px;
+                        border:1px solid var(--border);">
+
+                <strong style="color:var(--primary);">
+                    🎲 Randomized Grid
+                </strong>
+
+                <p style="color:var(--text-muted);
+                          font-size:0.85rem;
+                          margin-bottom:0;">
+
+                    The system will randomly determine the initial
+                    capacity, number of brownouts before blackout,
+                    and capacity increase following each brownout.
+
+                    These values will not be revealed to players
+                    during gameplay.
 
                 </p>
-
-
-                <div
-                    id="brownoutCapacityInputs"
-                    class="brownout-inputs">
-                </div>
-
-            </div>
-
-
-            <!-- RANDOM SETUP -->
-
-            <div
-                id="randomSetup"
-                style="display:none;">
-
-                <div class="random-info">
-
-                    🎲 <strong>Randomized Grid Parameters</strong>
-
-                    <br><br>
-
-                    The system will randomly determine:
-
-                    <ul>
-
-                        <li>
-                            Initial capacity:
-                            <strong>30–50 electrons</strong>
-                        </li>
-
-                        <li>
-                            Number of brownouts before blackout:
-                            <strong>1–6</strong>
-                        </li>
-
-                        <li>
-                            Capacity added after each brownout:
-                            <strong>5–15 electrons</strong>
-                        </li>
-
-                    </ul>
-
-                    <strong>
-                        Note:
-                    </strong>
-
-                    Grid capacity and the brownout limit will
-                    remain hidden from players during gameplay.
-
-                </div>
 
             </div>
 
         </div>
 
 
-        <!-- START GAME -->
+        <!-- START BUTTON -->
 
-        <div class="flex-row" style="margin-top:20px;">
+        <div class="flex-row"
+             style="margin-top:15px;">
 
-            <button
-                onclick="commenceGridSimulation()"
-                style="
-                    width:100%;
-                    background:var(--primary);
-                    color:#0b0f19;
-                ">
+            <button class="action-btn"
+                    onclick="commenceGridSimulation()"
+                    style="width:100%;
+                           background:var(--primary);
+                           color:#0b0f19;">
 
                 Start Grid Manager Operations &rarr;
 
@@ -840,62 +721,49 @@
     </div>
 
 
-    <!-- =====================================================
-         STEP 2: GAMEPLAY
-         ===================================================== -->
+    <!-- ==========================================
+         STEP 2: MAIN GRID MANAGER
+         ========================================== -->
 
-    <div
-        id="managerView"
-        style="display:none;">
+    <div id="managerView"
+         style="display:none;">
 
         <div class="round-bar">
 
             <div>
 
-                <span style="
-                    font-weight:bold;
-                    color:var(--primary);
-                ">
+                <span style="font-weight:bold;
+                             color:var(--primary);">
 
                     System Status:
 
                 </span>
 
-
                 <span id="turnTrackingText">
-
                     Loading data...
-
                 </span>
 
             </div>
 
 
-            <div style="
-                display:flex;
-                gap:8px;
-            ">
+            <div style="display:flex;
+                        gap:8px;
+                        flex-wrap:wrap;">
 
-                <button
-                    id="upgradeGridBtn"
-                    style="
-                        background:#8b5cf6;
-                        color:white;
-                        display:none;
-                    "
-                    onclick="applyGridUpgrade()">
+                <button id="upgradeGridBtn"
+                        style="background:#8b5cf6;
+                               color:white;
+                               display:none;"
+                        onclick="applyGridUpgrade()">
 
-                    Add Capacity
+                    Add +10e Capacity
 
                 </button>
 
 
-                <button
-                    onclick="executeRoundEndPayments()"
-                    style="
-                        background:var(--success);
-                        color:#0b0f19;
-                    ">
+                <button onclick="executeRoundEndPayments()"
+                        style="background:var(--success);
+                               color:#0b0f19;">
 
                     Process Pay Day & Utility Bills
 
@@ -906,9 +774,8 @@
         </div>
 
 
-        <div
-            id="playerContainer"
-            class="player-list">
+        <div id="playerContainer"
+             class="player-list">
         </div>
 
 
@@ -916,34 +783,24 @@
             Grid Activity & Transaction Log
         </h3>
 
-
-        <div
-            id="actionHistoryLog"
-            class="log-box">
+        <div id="actionHistoryLog"
+             class="log-box">
 
             <div class="log-item">
-
                 [SYSTEM] System active.
-
-                Grid parameters established.
-
             </div>
 
         </div>
 
 
-        <div
-            class="flex-row"
-            style="margin-top:20px;">
+        <div class="flex-row"
+             style="margin-top:20px;">
 
-            <button
-                class="action-btn"
-                onclick="forceEndGame('Manual Trigger')"
-                style="
-                    width:100%;
-                    font-size:0.85rem;
-                    color:var(--text-muted);
-                ">
+            <button class="action-btn"
+                    onclick="forceEndGame('Manual Trigger')"
+                    style="width:100%;
+                           font-size:0.85rem;
+                           color:var(--text-muted);">
 
                 Force Manual End Game
                 (Time Expired / Balanced Grid)
@@ -955,34 +812,26 @@
     </div>
 
 
-    <!-- =====================================================
-         STEP 3: END GAME
-         ===================================================== -->
+    <!-- ==========================================
+         STEP 3: FINAL LEADERBOARD
+         ========================================== -->
 
-    <div
-        id="endView"
-        class="game-ended"
-        style="display:none;">
+    <div id="endView"
+         class="game-ended"
+         style="display:none;">
 
-        <h2
-            id="endReasonTitle"
-            style="
-                color:var(--danger);
-                margin-top:0;
-            ">
+        <h2 id="endReasonTitle"
+            style="color:var(--danger);
+                   margin-top:0;">
 
             BLACKOUT INDUCED GAME OVER
 
         </h2>
 
-
-        <p
-            id="neighborhoodSharedScore"
-            style="
-                font-size:1.15rem;
-                font-weight:bold;
-                margin-bottom:25px;
-            ">
+        <p id="neighborhoodSharedScore"
+           style="font-size:1.15rem;
+                  font-weight:bold;
+                  margin-bottom:25px;">
         </p>
 
 
@@ -990,20 +839,15 @@
             Final Neighborhood Rankings
         </h3>
 
-
-        <div
-            id="finalScoreboardPodium"
-            style="
-                max-width:600px;
-                margin:0 auto;
-                text-align:left;
-            ">
+        <div id="finalScoreboardPodium"
+             style="max-width:600px;
+                    margin:0 auto;
+                    text-align:left;">
         </div>
 
 
-        <button
-            onclick="window.location.reload()"
-            style="margin-top:30px;">
+        <button onclick="window.location.reload()"
+                style="margin-top:30px;">
 
             Initialize New Grid Instance
 
@@ -1016,452 +860,273 @@
 
 <script>
 
-/* ============================================================
-   CARD DECKS
-   ============================================================ */
+    /* =========================================================
+       GAME STATE
+       ========================================================= */
 
-const goodsCards = [
+    let state = {
 
-    { id:"G01", price:160, electrons:-1, happiness:1, quantity:3 },
-    { id:"G02", price:240, electrons:-2, happiness:2, quantity:3 },
-    { id:"G03", price:320, electrons:-3, happiness:3, quantity:3 },
-    { id:"G04", price:400, electrons:-4, happiness:4, quantity:3 },
-    { id:"G05", price:480, electrons:-5, happiness:5, quantity:3 },
-    { id:"G06", price:560, electrons:-6, happiness:6, quantity:3 },
-    { id:"G07", price:640, electrons:-7, happiness:7, quantity:3 },
-    { id:"G08", price:720, electrons:-8, happiness:8, quantity:3 },
-    { id:"G09", price:800, electrons:-9, happiness:9, quantity:3 },
+        capacity: 50,
 
-    { id:"G10", price:160, electrons:-2, happiness:1, quantity:2 },
-    { id:"G11", price:240, electrons:-3, happiness:2, quantity:2 },
-    { id:"G12", price:320, electrons:-4, happiness:3, quantity:2 },
-    { id:"G13", price:400, electrons:-5, happiness:4, quantity:2 },
-    { id:"G14", price:480, electrons:-6, happiness:5, quantity:2 },
-    { id:"G15", price:560, electrons:-7, happiness:6, quantity:2 },
-    { id:"G16", price:640, electrons:-8, happiness:7, quantity:2 },
-    { id:"G17", price:720, electrons:-9, happiness:8, quantity:2 },
-    { id:"G18", price:800, electrons:-10, happiness:9, quantity:2 }
+        brownouts: 0,
 
-];
+        brownoutLimit: 4,
 
+        capacityIncreases: [],
 
-const solarPanelCards = [
+        round: 1,
 
-    { id:"SP01", price:2000, electrons:10, happiness:2, quantity:4 },
-    { id:"SP02", price:2500, electrons:15, happiness:2, quantity:2 },
-    { id:"SP03", price:2800, electrons:20, happiness:2, quantity:2 }
+        stagnantCount: 0,
 
-];
+        anyPurchases: false,
 
+        feePerRound: 0,
 
-/* ============================================================
-   SORT CARDS BY PRICE
-   ============================================================ */
+        startingPlayerIdx: 0,
 
-goodsCards.sort((a,b) => a.price - b.price);
+        activePlayerIdx: 0,
 
-solarPanelCards.sort((a,b) => a.price - b.price);
+        randomized: false
 
+    };
 
-/* ============================================================
-   GAME STATE
-   ============================================================ */
 
-let state = {
+    let players = [];
 
-    capacity: 50,
 
-    brownouts: 0,
+    /* =========================================================
+       GOODS CARDS
+       ========================================================= */
 
-    brownoutLimit: 4,
+    let goodsCards = [
 
-    capacityAdditions: [10,10,10,10],
+        { price: 160, electrons: -1, happiness: 1, quantity: 3 },
+        { price: 240, electrons: -2, happiness: 2, quantity: 3 },
+        { price: 320, electrons: -3, happiness: 3, quantity: 3 },
+        { price: 400, electrons: -4, happiness: 4, quantity: 3 },
+        { price: 480, electrons: -5, happiness: 5, quantity: 3 },
+        { price: 560, electrons: -6, happiness: 6, quantity: 3 },
+        { price: 640, electrons: -7, happiness: 7, quantity: 3 },
+        { price: 720, electrons: -8, happiness: 8, quantity: 3 },
+        { price: 800, electrons: -9, happiness: 9, quantity: 3 },
 
-    round: 1,
+        { price: 160, electrons: -2, happiness: 1, quantity: 2 },
+        { price: 240, electrons: -3, happiness: 2, quantity: 2 },
+        { price: 320, electrons: -4, happiness: 3, quantity: 2 },
+        { price: 400, electrons: -5, happiness: 4, quantity: 2 },
+        { price: 480, electrons: -6, happiness: 5, quantity: 2 },
+        { price: 560, electrons: -7, happiness: 6, quantity: 2 },
+        { price: 640, electrons: -8, happiness: 7, quantity: 2 },
+        { price: 720, electrons: -9, happiness: 8, quantity: 2 },
+        { price: 800, electrons: -10, happiness: 9, quantity: 2 }
 
-    stagnantCount: 0,
+    ];
 
-    anyPurchases: false,
 
-    feePerRound: 0,
+    /* =========================================================
+       SOLAR PANEL CARDS
+       ========================================================= */
 
-    startingPlayerIdx: 0,
+    let solarCards = [
 
-    activePlayerIdx: 0,
+        {
+            price: 2000,
+            electrons: 10,
+            happiness: 2,
+            quantity: 4
+        },
 
-    randomized: false
+        {
+            price: 2500,
+            electrons: 15,
+            happiness: 2,
+            quantity: 2
+        },
 
-};
-
-
-let players = [];
-
-
-/* ============================================================
-   SETUP MODE
-   ============================================================ */
-
-let setupMode = "manual";
-
-
-function setSetupMode(mode) {
-
-    setupMode = mode;
-
-
-    const manual =
-        document.getElementById('manualSetup');
-
-    const random =
-        document.getElementById('randomSetup');
-
-
-    const manualButton =
-        document.getElementById('manualModeButton');
-
-    const randomButton =
-        document.getElementById('randomModeButton');
-
-
-    if(mode === "manual") {
-
-        manual.style.display = "block";
-
-        random.style.display = "none";
-
-        manualButton.classList.add("selected");
-
-        randomButton.classList.remove("selected");
-
-    }
-
-    else {
-
-        manual.style.display = "none";
-
-        random.style.display = "block";
-
-        manualButton.classList.remove("selected");
-
-        randomButton.classList.add("selected");
-
-    }
-
-}
-
-
-/* ============================================================
-   RANDOM INTEGER
-   ============================================================ */
-
-function randomInteger(min,max) {
-
-    return Math.floor(
-        Math.random() * (max - min + 1)
-    ) + min;
-
-}
-
-
-/* ============================================================
-   GENERATE BROWNOUT INPUTS
-   ============================================================ */
-
-function generateBrownoutCapacityInputs() {
-
-    const input =
-        document.getElementById('brownoutLimitInput');
-
-    let number =
-        parseInt(input.value);
-
-
-    if(isNaN(number)) {
-
-        number = 4;
-
-    }
-
-
-    number =
-        Math.max(1,Math.min(6,number));
-
-
-    input.value =
-        number;
-
-
-    const container =
-        document.getElementById(
-            'brownoutCapacityInputs'
-        );
-
-
-    container.innerHTML = "";
-
-
-    for(let i=1;i<=number;i++) {
-
-        const wrapper =
-            document.createElement("div");
-
-
-        wrapper.className =
-            "brownout-input";
-
-
-        wrapper.innerHTML = `
-
-            <label>
-                After Brownout ${i}
-            </label>
-
-            <input
-                type="number"
-                id="brownoutAdd${i}"
-                min="5"
-                max="15"
-                value="10">
-
-            <div style="
-                font-size:0.7rem;
-                color:var(--text-muted);
-                margin-top:4px;
-            ">
-
-                +5 to +15 electrons
-
-            </div>
-
-        `;
-
-
-        container.appendChild(wrapper);
-
-    }
-
-}
-
-
-/* ============================================================
-   INITIALIZE SETUP FORM
-   ============================================================ */
-
-generateBrownoutCapacityInputs();
-
-
-/* ============================================================
-   LOGGING
-   ============================================================ */
-
-function appendLog(msg) {
-
-    const log =
-        document.getElementById(
-            'actionHistoryLog'
-        );
-
-
-    const element =
-        document.createElement('div');
-
-
-    element.className =
-        'log-item';
-
-
-    element.innerText =
-        `[Rd ${state.round}] ${msg}`;
-
-
-    log.insertBefore(
-        element,
-        log.firstChild
-    );
-
-}
-
-
-/* ============================================================
-   REGISTER PLAYER
-   ============================================================ */
-
-function registerNeighbor() {
-
-    const input =
-        document.getElementById(
-            'pNameInput'
-        );
-
-
-    const name =
-        input.value.trim();
-
-
-    if(!name) return;
-
-
-    players.push({
-
-        name:name,
-
-        cash:500,
-
-        goodsE:0,
-
-        solarE:0,
-
-        netE:0,
-
-        happiness:0
-
-    });
-
-
-    input.value = '';
-
-    input.focus();
-
-
-    document.getElementById(
-        'interimList'
-    ).innerText =
-
-        "Registered: " +
-        players.map(p => p.name).join(', ');
-
-}
-
-
-/* ============================================================
-   ESTABLISH GRID PARAMETERS
-   ============================================================ */
-
-function establishGridParameters() {
-
-    if(setupMode === "random") {
-
-        /* Initial capacity: 30–50 */
-
-        state.capacity =
-            randomInteger(30,50);
-
-
-        /* Brownout limit: 1–6 */
-
-        state.brownoutLimit =
-            randomInteger(1,6);
-
-
-        /* Capacity addition after each brownout */
-
-        state.capacityAdditions = [];
-
-
-        for(
-            let i=0;
-            i<state.brownoutLimit;
-            i++
-        ) {
-
-            state.capacityAdditions.push(
-                randomInteger(5,15)
-            );
-
+        {
+            price: 2800,
+            electrons: 20,
+            happiness: 2,
+            quantity: 2
         }
 
-
-        state.randomized = true;
-
-    }
-
-    else {
-
-        /* Manual initial capacity */
-
-        const capacityInput =
-            document.getElementById(
-                'initialCapacityInput'
-            );
+    ];
 
 
-        let capacity =
-            parseInt(
-                capacityInput.value
-            );
+    /* =========================================================
+       INITIALIZE BROWNOUT INPUTS
+       ========================================================= */
 
-
-        if(
-            isNaN(capacity) ||
-            capacity < 30 ||
-            capacity > 50
-        ) {
-
-            alert(
-                "Initial capacity must be between 30 and 50 electrons."
-            );
-
-            return false;
-
-        }
-
-
-        /* Manual brownout limit */
-
-        const limitInput =
-            document.getElementById(
-                'brownoutLimitInput'
-            );
-
+    function updateBrownoutCapacityInputs() {
 
         let limit =
             parseInt(
-                limitInput.value
+                document.getElementById("brownoutLimit").value
             );
 
+        if (isNaN(limit)) return;
 
-        if(
-            isNaN(limit) ||
-            limit < 1 ||
-            limit > 6
-        ) {
+        limit = Math.max(1, Math.min(6, limit));
 
-            alert(
-                "The number of brownouts must be between 1 and 6."
+        let container =
+            document.getElementById(
+                "brownoutCapacityInputs"
             );
 
-            return false;
+        container.innerHTML = "";
+
+
+        for (let i = 1; i <= limit; i++) {
+
+            let div =
+                document.createElement("div");
+
+            div.className =
+                "brownout-setting";
+
+
+            div.innerHTML = `
+
+                <label>
+                    After Brownout ${i}
+                </label>
+
+                <input
+                    type="number"
+                    id="capacityIncrease${i}"
+                    min="5"
+                    max="15"
+                    value="10">
+
+            `;
+
+            container.appendChild(div);
 
         }
 
-
-        /* Manual capacity additions */
-
-        let additions = [];
+    }
 
 
-        for(let i=1;i<=limit;i++) {
+    updateBrownoutCapacityInputs();
 
-            const field =
-                document.getElementById(
-                    `brownoutAdd${i}`
+
+    /* =========================================================
+       TOGGLE MANUAL / RANDOM MODE
+       ========================================================= */
+
+    function toggleGridMode() {
+
+        let random =
+            document.getElementById("randomMode").checked;
+
+        document.getElementById("manualSettings").style.display =
+            random ? "none" : "block";
+
+        document.getElementById("randomSettings").style.display =
+            random ? "block" : "none";
+
+    }
+
+
+    /* =========================================================
+       RANDOM INTEGER
+       ========================================================= */
+
+    function randomInteger(min, max) {
+
+        return Math.floor(
+            Math.random() * (max - min + 1)
+        ) + min;
+
+    }
+
+
+    /* =========================================================
+       INITIALIZE GRID PARAMETERS
+       ========================================================= */
+
+    function initializeGridParameters() {
+
+        state.randomized =
+            document.getElementById("randomMode").checked;
+
+
+        if (state.randomized) {
+
+            /*
+             * RANDOMIZED MODE
+             *
+             * These values are deliberately stored internally.
+             */
+
+            state.capacity =
+                randomInteger(30, 50);
+
+            state.brownoutLimit =
+                randomInteger(1, 6);
+
+            state.capacityIncreases = [];
+
+
+            for (
+                let i = 0;
+                i < state.brownoutLimit;
+                i++
+            ) {
+
+                state.capacityIncreases.push(
+                    randomInteger(5, 15)
                 );
 
+            }
 
-            let value =
+
+            /*
+             * IMPORTANT:
+             *
+             * The randomized values are NOT displayed
+             * to players.
+             */
+
+            document
+                .getElementById("demandDashboardCard")
+                .style.display = "none";
+
+            document
+                .getElementById("brownoutDashboardCard")
+                .style.display = "none";
+
+        }
+
+        else {
+
+            /*
+             * MANUAL MODE
+             */
+
+            let capacity =
                 parseInt(
-                    field.value
+                    document.getElementById(
+                        "initialCapacity"
+                    ).value
+                );
+
+            let brownoutLimit =
+                parseInt(
+                    document.getElementById(
+                        "brownoutLimit"
+                    ).value
                 );
 
 
-            if(
-                isNaN(value) ||
-                value < 5 ||
-                value > 15
+            if (
+                isNaN(capacity) ||
+                capacity < 30 ||
+                capacity > 50
             ) {
 
                 alert(
-                    `Capacity added after Brownout ${i} must be between 5 and 15 electrons.`
+                    "Initial capacity must be between 30 and 50 electrons."
                 );
 
                 return false;
@@ -1469,351 +1134,425 @@ function establishGridParameters() {
             }
 
 
-            additions.push(value);
+            if (
+                isNaN(brownoutLimit) ||
+                brownoutLimit < 1 ||
+                brownoutLimit > 6
+            ) {
+
+                alert(
+                    "The brownout limit must be between 1 and 6."
+                );
+
+                return false;
+
+            }
+
+
+            state.capacity = capacity;
+
+            state.brownoutLimit = brownoutLimit;
+
+            state.capacityIncreases = [];
+
+
+            for (
+                let i = 1;
+                i <= brownoutLimit;
+                i++
+            ) {
+
+                let input =
+                    document.getElementById(
+                        `capacityIncrease${i}`
+                    );
+
+                let increase =
+                    parseInt(input.value);
+
+
+                if (
+                    isNaN(increase) ||
+                    increase < 5 ||
+                    increase > 15
+                ) {
+
+                    alert(
+                        `Capacity increase after Brownout ${i} must be between 5 and 15 electrons.`
+                    );
+
+                    return false;
+
+                }
+
+
+                state.capacityIncreases.push(
+                    increase
+                );
+
+            }
+
+
+            /*
+             * Manual configuration means
+             * these values are visible.
+             */
+
+            document
+                .getElementById("demandDashboardCard")
+                .style.display = "block";
+
+            document
+                .getElementById("brownoutDashboardCard")
+                .style.display = "block";
+
+
+            /*
+             * Hide unused brownout tracker boxes.
+             */
+
+            for (let i = 1; i <= 6; i++) {
+
+                let box =
+                    document.getElementById(`bo${i}`);
+
+                if (i <= brownoutLimit) {
+
+                    box.style.display = "flex";
+
+                }
+
+                else {
+
+                    box.style.display = "none";
+
+                }
+
+            }
 
         }
 
 
-        state.capacity =
-            capacity;
-
-
-        state.brownoutLimit =
-            limit;
-
-
-        state.capacityAdditions =
-            additions;
-
-
-        state.randomized =
-            false;
+        return true;
 
     }
 
 
-    return true;
+    /* =========================================================
+       LOGGING
+       ========================================================= */
 
-}
+    function appendLog(msg) {
 
+        const log =
+            document.getElementById(
+                "actionHistoryLog"
+            );
 
-/* ============================================================
-   START GAME
-   ============================================================ */
+        const element =
+            document.createElement("div");
 
-function commenceGridSimulation() {
+        element.className = "log-item";
 
-    if(players.length === 0) {
+        element.innerText =
+            `[Rd ${state.round}] ${msg}`;
 
-        alert(
-            "Please register at least one player to manage the grid."
+        log.insertBefore(
+            element,
+            log.firstChild
         );
 
-        return;
+    }
+
+
+    /* =========================================================
+       REGISTER PLAYER
+       ========================================================= */
+
+    function registerNeighbor() {
+
+        const input =
+            document.getElementById(
+                "pNameInput"
+            );
+
+        const name =
+            input.value.trim();
+
+
+        if (!name) return;
+
+
+        players.push({
+
+            name: name,
+
+            cash: 500,
+
+            goodsE: 0,
+
+            solarE: 0,
+
+            netE: 0,
+
+            happiness: 0
+
+        });
+
+
+        input.value = "";
+
+        input.focus();
+
+
+        document
+            .getElementById("interimList")
+            .innerText =
+            "Registered: " +
+            players
+                .map(p => p.name)
+                .join(", ");
+
 
     }
 
 
-    /* Establish parameters */
+    /* =========================================================
+       START GAME
+       ========================================================= */
 
-    if(!establishGridParameters()) {
+    function commenceGridSimulation() {
 
-        return;
+        if (players.length === 0) {
 
-    }
+            alert(
+                "Please register at least one player to manage the grid."
+            );
 
+            return;
 
-    document.getElementById(
-        'setupView'
-    ).style.display = 'none';
+        }
 
 
-    document.getElementById(
-        'managerView'
-    ).style.display = 'block';
+        if (!initializeGridParameters()) {
 
+            return;
 
-    state.activePlayerIdx =
-        state.startingPlayerIdx;
+        }
 
 
-    /*
-       Hide the demand and brownout information
-       when parameters were randomized.
-    */
+        document
+            .getElementById("setupView")
+            .style.display = "none";
 
-    if(state.randomized) {
+        document
+            .getElementById("managerView")
+            .style.display = "block";
 
-        document.getElementById(
-            'demandDashboardCard'
-        ).style.display = 'none';
 
-
-        document.getElementById(
-            'brownoutDashboardCard'
-        ).style.display = 'none';
-
-    }
-
-    else {
-
-        document.getElementById(
-            'demandDashboardCard'
-        ).style.display = 'block';
-
-
-        document.getElementById(
-            'brownoutDashboardCard'
-        ).style.display = 'block';
-
-    }
-
-
-    evaluateSystemDemand();
-
-    updateBrownoutBoxes();
-
-    updateUserInterface();
-
-
-    appendLog(
-        `Grid initialized with ${state.capacity}e capacity.`
-    );
-
-
-    appendLog(
-        `Blackout threshold: ${state.brownoutLimit} brownout(s).`
-    );
-
-
-    appendLog(
-        `Capacity additions after brownouts: ${
-            state.capacityAdditions.join(', ')
-        }e.`
-    );
-
-}
-
-
-/* ============================================================
-   EVALUATE DEMAND
-   ============================================================ */
-
-function evaluateSystemDemand() {
-
-    let currentLoad = 0;
-
-
-    players.forEach(p => {
-
-        currentLoad += p.goodsE;
-
-        currentLoad -= p.solarE;
-
-    });
-
-
-    document.getElementById(
-        'dispDemand'
-    ).innerText =
-
-        `${currentLoad} / ${state.capacity} e`;
-
-
-    if(currentLoad > state.capacity) {
-
-        document.getElementById(
-            'dispDemand'
-        ).style.color =
-            'var(--danger)';
-
-        document.getElementById(
-            'upgradeGridBtn'
-        ).style.display =
-            'block';
-
-    }
-
-    else {
-
-        document.getElementById(
-            'dispDemand'
-        ).style.color =
-            'var(--text-main)';
-
-        document.getElementById(
-            'upgradeGridBtn'
-        ).style.display =
-            'none';
-
-    }
-
-
-    return currentLoad;
-
-}
-
-
-/* ============================================================
-   NO PURCHASE
-   ============================================================ */
-
-function noPurchase(pIdx) {
-
-    const p =
-        players[pIdx];
-
-
-    appendLog(
-        `${p.name} chose not to purchase a card this turn.`
-    );
-
-
-    state.activePlayerIdx =
-        (state.activePlayerIdx + 1)
-        % players.length;
-
-
-    updateUserInterface();
-
-}
-
-
-/* ============================================================
-   BUY CARD
-   ============================================================ */
-
-function buyCard(
-    pIdx,
-    cardType,
-    cardIndex
-) {
-
-    const p =
-        players[pIdx];
-
-
-    const deck =
-        cardType === 'yellow'
-            ? goodsCards
-            : solarPanelCards;
-
-
-    const card =
-        deck[cardIndex];
-
-
-    if(!card) return;
-
-
-    if(card.quantity <= 0) {
-
-        alert(
-            "That card is no longer available."
-        );
-
-        return;
-
-    }
-
-
-    if(p.cash < card.price) {
-
-        alert(
-
-            `${p.name} does not have enough cash to purchase this card.\n\n` +
-
-            `Card price: $${card.price.toLocaleString()}\n` +
-
-            `Available cash: $${p.cash.toLocaleString()}`
-
-        );
-
-        return;
-
-    }
-
-
-    const confirmed =
-        confirm(
-
-            `${p.name}, purchase this card?\n\n` +
-
-            `Price: $${card.price.toLocaleString()}\n` +
-
-            `Electrons: ${
-                card.electrons > 0
-                    ? '+'
-                    : ''
-            }${card.electrons}e\n` +
-
-            `Happiness: +${card.happiness}\n\n` +
-
-            `Cards remaining after purchase: ${
-                card.quantity - 1
-            }`
-
-        );
-
-
-    if(!confirmed) return;
-
-
-    card.quantity -= 1;
-
-    state.anyPurchases = true;
-
-
-    p.cash -= card.price;
-
-
-    /* GOODS */
-
-    if(cardType === 'yellow') {
-
-        const electronUse =
-            Math.abs(card.electrons);
-
-
-        p.goodsE +=
-            electronUse;
-
-
-        p.happiness +=
-            card.happiness;
-
-
-        p.netE =
-            p.solarE - p.goodsE;
+        state.activePlayerIdx =
+            state.startingPlayerIdx;
 
 
         appendLog(
-
-            `${p.name} purchased Goods Card ${card.id}. ` +
-
-            `Paid $${card.price.toLocaleString()}, ` +
-
-            `used ${electronUse}e, ` +
-
-            `gained +${card.happiness} happiness.`
-
+            state.randomized
+                ? "[SYSTEM] Grid parameters have been randomized."
+                : `[SYSTEM] Grid initialized at ${state.capacity}e capacity with a ${state.brownoutLimit}-brownout limit.`
         );
 
 
-        const load =
+        evaluateSystemDemand();
+
+        updateUserInterface();
+
+    }
+
+
+    /* =========================================================
+       CALCULATE SYSTEM DEMAND
+       ========================================================= */
+
+    function evaluateSystemDemand() {
+
+        let currentLoad = 0;
+
+
+        players.forEach(p => {
+
+            currentLoad += p.goodsE;
+
+            currentLoad -= p.solarE;
+
+        });
+
+
+        let display =
+            document.getElementById(
+                "dispDemand"
+            );
+
+
+        display.innerText =
+            `${currentLoad} / ${state.capacity} e`;
+
+
+        if (currentLoad > state.capacity) {
+
+            display.style.color =
+                "var(--danger)";
+
+            document
+                .getElementById(
+                    "upgradeGridBtn"
+                )
+                .style.display =
+                "block";
+
+        }
+
+        else {
+
+            display.style.color =
+                "var(--text-main)";
+
+            document
+                .getElementById(
+                    "upgradeGridBtn"
+                )
+                .style.display =
+                "none";
+
+        }
+
+
+        return currentLoad;
+
+    }
+
+
+    /* =========================================================
+       BUY A CARD
+       ========================================================= */
+
+    function buyCard(
+        pIdx,
+        cardType,
+        cardIndex
+    ) {
+
+        let p = players[pIdx];
+
+        let card;
+
+
+        if (cardType === "yellow") {
+
+            card =
+                goodsCards[cardIndex];
+
+        }
+
+        else {
+
+            card =
+                solarCards[cardIndex];
+
+        }
+
+
+        if (!card || card.quantity <= 0) {
+
+            alert(
+                "That card is no longer available."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Do not allow purchases that the player
+         * cannot afford.
+         */
+
+        if (p.cash < card.price) {
+
+            alert(
+                `${p.name} does not have enough cash to purchase this card.`
+            );
+
+            return;
+
+        }
+
+
+        state.anyPurchases = true;
+
+
+        /* Remove one card from the available supply */
+
+        card.quantity--;
+
+
+        /* Apply transaction */
+
+        p.cash -= card.price;
+
+
+        if (cardType === "yellow") {
+
+            p.goodsE +=
+                Math.abs(card.electrons);
+
+            p.happiness +=
+                card.happiness;
+
+            appendLog(
+                `${p.name} purchased a Yellow Goods Card. Paid $${card.price}, used ${Math.abs(card.electrons)}e, gained +${card.happiness} happiness.`
+            );
+
+        }
+
+        else {
+
+            p.solarE +=
+                card.electrons;
+
+            p.happiness +=
+                card.happiness;
+
+            appendLog(
+                `${p.name} purchased a Blue Solar Panel Card. Paid $${card.price}, generated +${card.electrons}e, gained +${card.happiness} happiness.`
+            );
+
+        }
+
+
+        p.netE =
+            p.solarE -
+            p.goodsE;
+
+
+        let load =
             evaluateSystemDemand();
 
 
-        if(load > state.capacity) {
+        /*
+         * BROWNOUT
+         */
 
-            state.brownouts += 1;
+        if (load > state.capacity) {
+
+            state.brownouts++;
 
 
-            const excess =
-                load - state.capacity;
+            let excess =
+                load -
+                state.capacity;
 
 
-            const fineAmount =
+            let fineAmount =
                 excess * 50;
 
 
@@ -1821,35 +1560,246 @@ function buyCard(
                 fineAmount;
 
 
-            appendLog(
+            /*
+             * IMPORTANT:
+             *
+             * In randomized mode we deliberately
+             * DO NOT reveal the capacity increase.
+             */
 
-                `⚠️ BROWNOUT! Neighborhood demand reached ` +
-                `${load}e (Exceeded capacity by ${excess}e).`
+            if (state.randomized) {
 
-            );
+                appendLog(
+                    `⚠️ BROWNOUT! Neighborhood demand reached ${load}e and exceeded grid capacity.`
+                );
+
+                appendLog(
+                    `💥 ${p.name} was charged a system fine of $${fineAmount}.`
+                );
+
+            }
+
+            else {
+
+                let capacityIncrease =
+                    state.capacityIncreases[
+                        state.brownouts - 1
+                    ];
 
 
-            appendLog(
+                appendLog(
+                    `⚠️ BROWNOUT! Neighborhood demand reached ${load}e and exceeded capacity by ${excess}e.`
+                );
 
-                `💥 ${p.name} was charged a system fine of ` +
-                `$${fineAmount}.`
+                appendLog(
+                    `💥 ${p.name} was charged a system fine of $${fineAmount}.`
+                );
 
-            );
+
+                /*
+                 * In manual mode the amount is known
+                 * and can therefore be displayed.
+                 */
+
+                appendLog(
+                    `🔧 Grid capacity will increase by ${capacityIncrease}e after this brownout.`
+                );
+
+            }
 
 
             updateBrownoutBoxes();
 
 
-            if(
+            /*
+             * BLACKOUT CHECK
+             */
+
+            if (
                 state.brownouts >=
                 state.brownoutLimit
             ) {
 
-                forceEndGame(
-                    'blackout'
-                );
+                forceEndGame("blackout");
 
                 return;
+
+            }
+
+
+            /*
+             * AUTOMATIC CAPACITY INCREASE
+             *
+             * The actual value is applied internally
+             * in both modes.
+             */
+
+            let capacityIncrease =
+                state.capacityIncreases[
+                    state.brownouts - 1
+                ];
+
+
+            state.capacity +=
+                capacityIncrease;
+
+
+            /*
+             * Randomized mode deliberately does
+             * not announce this value.
+             */
+
+            if (state.randomized) {
+
+                appendLog(
+                    `🔧 Grid capacity has been automatically adjusted following the brownout.`
+                );
+
+            }
+
+
+            evaluateSystemDemand();
+
+        }
+
+
+        /*
+         * Move to next player.
+         */
+
+        state.activePlayerIdx =
+            (
+                state.activePlayerIdx + 1
+            ) %
+            players.length;
+
+
+        updateUserInterface();
+
+    }
+
+
+    /* =========================================================
+       NO PURCHASE
+       ========================================================= */
+
+    function noPurchase(pIdx) {
+
+        let p =
+            players[pIdx];
+
+
+        appendLog(
+            `${p.name} chose not to purchase anything this round.`
+        );
+
+
+        state.activePlayerIdx =
+            (
+                state.activePlayerIdx + 1
+            ) %
+            players.length;
+
+
+        updateUserInterface();
+
+    }
+
+
+    /* =========================================================
+       BANKRUPTCY FINE MITIGATION
+       ========================================================= */
+
+    function triggerBankruptcyFineMitigation(
+        pIdx
+    ) {
+
+        let p =
+            players[pIdx];
+
+
+        let overageAmt =
+            parseInt(
+                prompt(
+                    "How many electrons over the capacity did this player go?",
+                    "3"
+                )
+            );
+
+
+        if (isNaN(overageAmt)) return;
+
+
+        p.happiness -=
+            overageAmt;
+
+
+        p.cash +=
+            overageAmt * 50;
+
+
+        appendLog(
+            `💸 Bankruptcy protection applied to ${p.name}. Refunded cash fine and subtracted ${overageAmt} Happiness point(s) instead.`
+        );
+
+
+        updateUserInterface();
+
+    }
+
+
+    /* =========================================================
+       UPDATE BROWNOUT BOXES
+       ========================================================= */
+
+    function updateBrownoutBoxes() {
+
+        for (let i = 1; i <= 6; i++) {
+
+            let box =
+                document.getElementById(
+                    `bo${i}`
+                );
+
+
+            if (!box) continue;
+
+
+            if (
+                i <= state.brownoutLimit
+            ) {
+
+                box.style.display =
+                    "flex";
+
+            }
+
+
+            if (
+                state.brownouts >= i
+            ) {
+
+                if (
+                    i === state.brownoutLimit
+                ) {
+
+                    box.className =
+                        "bo-box blackout";
+
+                    box.innerText =
+                        "⏹";
+
+                }
+
+                else {
+
+                    box.className =
+                        "bo-box active";
+
+                    box.innerText =
+                        i;
+
+                }
 
             }
 
@@ -1858,415 +1808,359 @@ function buyCard(
     }
 
 
-    /* SOLAR */
+    /* =========================================================
+       MANUAL GRID UPGRADE
+       ========================================================= */
 
-    else if(cardType === 'blue') {
+    function applyGridUpgrade() {
 
-        p.solarE +=
-            card.electrons;
-
-
-        p.happiness +=
-            card.happiness;
+        let currentTierFee = 0;
 
 
-        p.netE =
-            p.solarE - p.goodsE;
+        if (state.brownouts === 1)
+            currentTierFee = 20;
 
+        else if (state.brownouts === 2)
+            currentTierFee = 40;
+
+        else if (state.brownouts >= 3)
+            currentTierFee = 60;
+
+
+        let confirmed =
+            confirm(
+                `Negotiate Upgrade: Add 10 extra electrons to the grid capacity? This permanently adds a $${currentTierFee} fee to ALL neighbors' bills in every subsequent round.`
+            );
+
+
+        if (confirmed) {
+
+            state.capacity += 10;
+
+            state.feePerRound +=
+                currentTierFee;
+
+
+            appendLog(
+                `🔧 Grid capacity upgraded to ${state.capacity}e! Added persistent $${currentTierFee}/round fee to all utility records.`
+            );
+
+
+            evaluateSystemDemand();
+
+            updateUserInterface();
+
+        }
+
+    }
+
+
+    /* =========================================================
+       END OF ROUND PAYMENTS
+       ========================================================= */
+
+    function executeRoundEndPayments() {
 
         appendLog(
-
-            `${p.name} purchased Solar Panel Card ${card.id}. ` +
-
-            `Paid $${card.price.toLocaleString()}, ` +
-
-            `generated +${card.electrons}e, ` +
-
-            `gained +${card.happiness} happiness.`
-
+            `--- Executing Round ${state.round} Financial Settlement ---`
         );
+
+
+        players.forEach(p => {
+
+            /*
+             * Base income
+             */
+
+            p.cash += 500;
+
+
+            /*
+             * Energy settlement
+             */
+
+            let baseBill =
+                p.netE * 20;
+
+
+            if (baseBill > 0) {
+
+                p.cash += baseBill;
+
+                appendLog(
+                    `${p.name} earned $${baseBill} for generating surplus power.`
+                );
+
+            }
+
+            else if (baseBill < 0) {
+
+                p.cash += baseBill;
+
+                appendLog(
+                    `${p.name} paid $${Math.abs(baseBill)} for energy grid usage.`
+                );
+
+            }
+
+
+            /*
+             * System fee
+             */
+
+            if (state.feePerRound > 0) {
+
+                p.cash -=
+                    state.feePerRound;
+
+            }
+
+        });
+
+
+        /*
+         * Check for inactivity
+         */
+
+        if (!state.anyPurchases) {
+
+            state.stagnantCount++;
+
+
+            appendLog(
+                `No grid components bought this round. Balanced system index counter: ${state.stagnantCount}/4.`
+            );
+
+        }
+
+        else {
+
+            state.stagnantCount = 0;
+
+        }
+
+
+        /*
+         * Four inactive rounds = balanced ending
+         */
+
+        if (state.stagnantCount >= 4) {
+
+            forceEndGame("balanced");
+
+            return;
+
+        }
+
+
+        /*
+         * Rotate starting player
+         */
+
+        state.startingPlayerIdx =
+            (
+                state.startingPlayerIdx -
+                1 +
+                players.length
+            ) %
+            players.length;
+
+
+        state.activePlayerIdx =
+            state.startingPlayerIdx;
+
+
+        state.round++;
+
+        state.anyPurchases = false;
+
+
+        updateUserInterface();
+
+    }
+
+
+    /* =========================================================
+       CARD HTML
+       ========================================================= */
+
+    function createGoodsCardsHTML(pIdx) {
+
+        /*
+         * Sort cards from lowest price to highest.
+         *
+         * If two cards have the same price, they remain
+         * in their original order.
+         */
+
+        let sorted =
+            goodsCards
+                .map((card, index) => ({
+                    card,
+                    index
+                }))
+                .sort(
+                    (a, b) =>
+                        a.card.price -
+                        b.card.price
+                );
+
+
+        return sorted.map(item => {
+
+            let card =
+                item.card;
+
+            let index =
+                item.index;
+
+
+            let soldOut =
+                card.quantity <= 0;
+
+
+            return `
+
+                <div
+                    class="purchase-card goods-option ${soldOut ? "sold-out" : ""}"
+                    onclick="${
+                        soldOut
+                        ? ""
+                        : `buyCard(${pIdx}, 'yellow', ${index})`
+                    }">
+
+                    <div class="card-price">
+                        $${card.price.toLocaleString()}
+                    </div>
+
+                    <div class="card-stats">
+                        ${Math.abs(card.electrons)}e use
+                        &nbsp;|&nbsp;
+                        +${card.happiness} 😊
+                    </div>
+
+                    <div class="card-quantity">
+                        ${card.quantity} card(s) remaining
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+    }
+
+
+    function createSolarCardsHTML(pIdx) {
+
+        let sorted =
+            solarCards
+                .map((card, index) => ({
+                    card,
+                    index
+                }))
+                .sort(
+                    (a, b) =>
+                        a.card.price -
+                        b.card.price
+                );
+
+
+        return sorted.map(item => {
+
+            let card =
+                item.card;
+
+            let index =
+                item.index;
+
+
+            let soldOut =
+                card.quantity <= 0;
+
+
+            return `
+
+                <div
+                    class="purchase-card solar-option ${soldOut ? "sold-out" : ""}"
+                    onclick="${
+                        soldOut
+                        ? ""
+                        : `buyCard(${pIdx}, 'blue', ${index})`
+                    }">
+
+                    <div class="card-price">
+                        $${card.price.toLocaleString()}
+                    </div>
+
+                    <div class="card-stats">
+                        +${card.electrons}e generation
+                        &nbsp;|&nbsp;
+                        +${card.happiness} 😊
+                    </div>
+
+                    <div class="card-quantity">
+                        ${card.quantity} card(s) remaining
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+    }
+
+
+    /* =========================================================
+       UPDATE USER INTERFACE
+       ========================================================= */
+
+    function updateUserInterface() {
+
+        document
+            .getElementById("dispRound")
+            .innerText =
+            state.round;
+
+
+        document
+            .getElementById("dispFees")
+            .innerText =
+            `$${state.feePerRound} / rd`;
 
 
         evaluateSystemDemand();
 
-    }
 
-
-    state.activePlayerIdx =
-        (state.activePlayerIdx + 1)
-        % players.length;
-
-
-    updateUserInterface();
-
-}
-
-
-/* ============================================================
-   FINE MITIGATION
-   ============================================================ */
-
-function triggerBankruptcyFineMitigation(pIdx) {
-
-    const p =
-        players[pIdx];
-
-
-    const overageAmt =
-        parseInt(
-
-            prompt(
-                "How many electrons over the capacity did this player go?",
-                "3"
-            )
-
-        );
-
-
-    if(isNaN(overageAmt)) return;
-
-
-    p.happiness -=
-        overageAmt;
-
-
-    p.cash +=
-        overageAmt * 50;
-
-
-    appendLog(
-
-        `💸 Bankruptcy protection applied to ${p.name}. ` +
-        `Refunded cash fine, subtracted ${overageAmt} ` +
-        `individual Happiness point(s) instead.`
-
-    );
-
-
-    updateUserInterface();
-
-}
-
-
-/* ============================================================
-   BROWNOUT DISPLAY
-   ============================================================ */
-
-function updateBrownoutBoxes() {
-
-    const container =
-        document.getElementById(
-            'brownoutDisplay'
-        );
-
-
-    container.innerHTML = "";
-
-
-    for(
-        let i=1;
-        i<=state.brownoutLimit;
-        i++
-    ) {
-
-        const box =
-            document.createElement(
-                'div'
-            );
-
-
-        box.id =
-            `bo${i}`;
-
-
-        box.className =
-            'bo-box';
-
-
-        box.innerText =
-            i;
-
-
-        container.appendChild(
-            box
-        );
-
-    }
-
-
-    for(
-        let i=1;
-        i<=state.brownouts;
-        i++
-    ) {
-
-        const box =
+        const container =
             document.getElementById(
-                `bo${i}`
+                "playerContainer"
             );
 
 
-        if(box) {
+        container.innerHTML = "";
 
-            box.className =
-                "bo-box active";
 
-        }
+        players.forEach((p, idx) => {
 
-    }
-
-}
-
-
-/* ============================================================
-   GRID UPGRADE
-   ============================================================ */
-
-function applyGridUpgrade() {
-
-    const nextUpgradeIndex =
-        state.brownouts - 1;
-
-
-    const capacityIncrease =
-        state.capacityAdditions[
-            nextUpgradeIndex
-        ];
-
-
-    if(
-        capacityIncrease === undefined
-    ) {
-
-        alert(
-            "No further grid capacity upgrades are available."
-        );
-
-        return;
-
-    }
-
-
-    const currentTierFee =
-        state.brownouts === 1
-            ? 20
-            : state.brownouts === 2
-                ? 40
-                : 60;
-
-
-    const confirmed =
-        confirm(
-
-            `Grid Upgrade\n\n` +
-
-            `Add ${capacityIncrease} electrons ` +
-            `to grid capacity?\n\n` +
-
-            `New capacity: ${
-                state.capacity +
-                capacityIncrease
-            }e\n\n` +
-
-            `This will permanently add a ` +
-            `$${currentTierFee}/round fee to all neighbors.`
-
-        );
-
-
-    if(!confirmed) return;
-
-
-    state.capacity +=
-        capacityIncrease;
-
-
-    state.feePerRound +=
-        currentTierFee;
-
-
-    appendLog(
-
-        `🔧 Grid capacity upgraded by ` +
-        `${capacityIncrease}e to ` +
-        `${state.capacity}e! ` +
-
-        `Added persistent $${currentTierFee}/round ` +
-        `fee to all utility records.`
-
-    );
-
-
-    evaluateSystemDemand();
-
-    updateUserInterface();
-
-}
-
-
-/* ============================================================
-   ROUND-END PAYMENTS
-   ============================================================ */
-
-function executeRoundEndPayments() {
-
-    appendLog(
-        `--- Executing Round ${state.round} Financial Settlement ---`
-    );
-
-
-    players.forEach(p => {
-
-        p.cash += 500;
-
-
-        const baseBill =
-            p.netE * 20;
-
-
-        if(baseBill > 0) {
-
-            p.cash +=
-                baseBill;
-
-
-            appendLog(
-
-                `${p.name} earned $${baseBill} ` +
-                `for generating surplus power.`
-
-            );
-
-        }
-
-        else if(baseBill < 0) {
-
-            p.cash +=
-                baseBill;
-
-
-            appendLog(
-
-                `${p.name} paid $${Math.abs(baseBill)} ` +
-                `for energy grid usage.`
-
-            );
-
-        }
-
-
-        if(state.feePerRound > 0) {
-
-            p.cash -=
-                state.feePerRound;
-
-        }
-
-    });
-
-
-    if(!state.anyPurchases) {
-
-        state.stagnantCount += 1;
-
-
-        appendLog(
-
-            `No grid components bought this round. ` +
-            `Balanced system index counter: ` +
-            `${state.stagnantCount}/4.`
-
-        );
-
-    }
-
-    else {
-
-        state.stagnantCount = 0;
-
-    }
-
-
-    if(state.stagnantCount >= 4) {
-
-        forceEndGame(
-            'balanced'
-        );
-
-        return;
-
-    }
-
-
-    state.startingPlayerIdx =
-        (
-            state.startingPlayerIdx -
-            1 +
-            players.length
-        )
-        % players.length;
-
-
-    state.activePlayerIdx =
-        state.startingPlayerIdx;
-
-
-    state.round += 1;
-
-    state.anyPurchases = false;
-
-
-    updateUserInterface();
-
-}
-
-
-/* ============================================================
-   USER INTERFACE
-   ============================================================ */
-
-function updateUserInterface() {
-
-    document.getElementById(
-        'dispRound'
-    ).innerText =
-        state.round;
-
-
-    document.getElementById(
-        'dispFees'
-    ).innerText =
-        `$${state.feePerRound} / rd`;
-
-
-    const container =
-        document.getElementById(
-            'playerContainer'
-        );
-
-
-    container.innerHTML = "";
-
-
-    players.forEach(
-        (p,idx) => {
-
-            const isCurrentTurn =
+            let isCurrentTurn =
                 idx ===
                 state.activePlayerIdx;
 
 
-            const card =
+            let card =
                 document.createElement(
-                    'div'
+                    "div"
                 );
 
 
             card.className =
                 `player-card ${
                     isCurrentTurn
-                        ? 'active-turn'
-                        : ''
+                    ? "active-turn"
+                    : ""
                 }`;
 
 
@@ -2280,14 +2174,14 @@ function updateUserInterface() {
 
                     <span class="turn-badge ${
                         isCurrentTurn
-                            ? 'active'
-                            : ''
+                        ? "active"
+                        : ""
                     }">
 
                         ${
                             isCurrentTurn
-                                ? 'Active Turn'
-                                : 'Waiting'
+                            ? "Active Turn"
+                            : "Waiting"
                         }
 
                     </span>
@@ -2334,53 +2228,39 @@ function updateUserInterface() {
                                 color:var(--success);
                                 font-weight:bold;
                             ">
-
                                 $${p.cash.toLocaleString()}
-
                             </td>
-
 
                             <td style="
                                 color:var(--yellow-card);
                                 font-weight:bold;
                             ">
-
                                 ${p.goodsE} e
-
                             </td>
-
 
                             <td style="
                                 color:var(--blue-card);
                                 font-weight:bold;
                             ">
-
                                 ${p.solarE} e
-
                             </td>
-
 
                             <td style="
                                 font-weight:bold;
                                 color:${
                                     p.netE >= 0
-                                        ? 'var(--success)'
-                                        : 'var(--danger)'
+                                    ? "var(--success)"
+                                    : "var(--danger)"
                                 };
                             ">
-
                                 ${p.netE} e
-
                             </td>
-
 
                             <td style="
                                 color:#a855f7;
                                 font-weight:bold;
                             ">
-
                                 ${p.happiness} 😊
-
                             </td>
 
                         </tr>
@@ -2392,159 +2272,46 @@ function updateUserInterface() {
 
                 ${
                     isCurrentTurn
-
                     ? `
 
-                        <div class="card-selection">
+                        <div class="purchase-area">
+
+                            <div class="purchase-title">
+                                🟡 Goods Cards — Select One
+                            </div>
+
+                            <div class="card-options">
+
+                                ${createGoodsCardsHTML(idx)}
+
+                            </div>
+
+
+                            <div class="purchase-title"
+                                 style="margin-top:20px;">
+
+                                🔵 Solar Panel Cards — Select One
+
+                            </div>
+
+                            <div class="card-options">
+
+                                ${createSolarCardsHTML(idx)}
+
+                            </div>
+
 
                             <button
-                                class="no-purchase-button"
-                                onclick="
-                                    noPurchase(${idx})
-                                ">
+                                class="no-purchase-btn"
+                                onclick="noPurchase(${idx})">
 
-                                ⏭️ No Purchase This Round
+                                No Purchase This Round
 
                             </button>
-
-
-                            <h4>
-                                🛒 Choose a Goods Card
-                            </h4>
-
-
-                            <div class="card-options">
-
-                                ${
-                                    goodsCards.map(
-                                        (c,i) => `
-
-                                        <button
-                                            class="game-card goods"
-
-                                            ${
-                                                c.quantity <= 0 ||
-                                                p.cash < c.price
-                                                    ? 'disabled'
-                                                    : ''
-                                            }
-
-                                            onclick="
-                                                buyCard(
-                                                    ${idx},
-                                                    'yellow',
-                                                    ${i}
-                                                )
-                                            ">
-
-                                            <div class="game-card-price">
-
-                                                $${c.price.toLocaleString()}
-
-                                            </div>
-
-
-                                            <div class="game-card-details">
-
-                                                ⚡ ${c.electrons}e<br>
-
-                                                😊 +${c.happiness}
-
-                                            </div>
-
-
-                                            <div class="card-count">
-
-                                                ${c.quantity}
-                                                card${
-                                                    c.quantity === 1
-                                                        ? ''
-                                                        : 's'
-                                                }
-                                                remaining
-
-                                            </div>
-
-                                        </button>
-
-                                    `
-                                    ).join('')
-                                }
-
-                            </div>
-
-
-                            <h4 style="margin-top:20px;">
-
-                                ☀️ Choose a Solar Panel Card
-
-                            </h4>
-
-
-                            <div class="card-options">
-
-                                ${
-                                    solarPanelCards.map(
-                                        (c,i) => `
-
-                                        <button
-                                            class="game-card solar"
-
-                                            ${
-                                                c.quantity <= 0 ||
-                                                p.cash < c.price
-                                                    ? 'disabled'
-                                                    : ''
-                                            }
-
-                                            onclick="
-                                                buyCard(
-                                                    ${idx},
-                                                    'blue',
-                                                    ${i}
-                                                )
-                                            ">
-
-                                            <div class="game-card-price">
-
-                                                $${c.price.toLocaleString()}
-
-                                            </div>
-
-
-                                            <div class="game-card-details">
-
-                                                ⚡ +${c.electrons}e<br>
-
-                                                😊 +${c.happiness}
-
-                                            </div>
-
-
-                                            <div class="card-count">
-
-                                                ${c.quantity}
-                                                card${
-                                                    c.quantity === 1
-                                                        ? ''
-                                                        : 's'
-                                                }
-                                                remaining
-
-                                            </div>
-
-                                        </button>
-
-                                    `
-                                    ).join('')
-                                }
-
-                            </div>
 
                         </div>
 
                     `
-
                     : `
 
                         <div style="
@@ -2553,13 +2320,7 @@ function updateUserInterface() {
                             padding:15px;
                         ">
 
-                            Waiting for
-                            ${
-                                players[
-                                    state.activePlayerIdx
-                                ].name
-                            }
-                            to complete their turn.
+                            Waiting for ${players[state.activePlayerIdx].name}'s turn...
 
                         </div>
 
@@ -2567,20 +2328,13 @@ function updateUserInterface() {
                 }
 
 
-                <div
-                    class="btn-group"
-                    style="margin-top:10px;">
+                <div class="btn-group"
+                     style="margin-top:12px;">
 
                     <button
                         class="action-btn"
-                        style="
-                            color:var(--text-muted);
-                        "
-                        onclick="
-                            triggerBankruptcyFineMitigation(
-                                ${idx}
-                            )
-                        ">
+                        style="color:var(--text-muted);"
+                        onclick="triggerBankruptcyFineMitigation(${idx})">
 
                         ⚠️ Pay Fine With Happiness
 
@@ -2591,196 +2345,192 @@ function updateUserInterface() {
             `;
 
 
-            container.appendChild(
-                card
-            );
+            container.appendChild(card);
 
-        }
-    );
+        });
 
 
-    if(players.length > 0) {
-
-        document.getElementById(
-            'turnTrackingText'
-        ).innerText =
-
+        document
+            .getElementById(
+                "turnTrackingText"
+            )
+            .innerText =
             `Current turn belongs to: ${
-                players[
-                    state.activePlayerIdx
-                ].name
+                players[state.activePlayerIdx].name
             }`;
 
     }
 
-}
+
+    /* =========================================================
+       FORCE END GAME
+       ========================================================= */
+
+    function forceEndGame(condition) {
+
+        document
+            .getElementById("managerView")
+            .style.display =
+            "none";
 
 
-/* ============================================================
-   END GAME
-   ============================================================ */
-
-function forceEndGame(condition) {
-
-    document.getElementById(
-        'managerView'
-    ).style.display =
-        'none';
+        document
+            .getElementById("endView")
+            .style.display =
+            "block";
 
 
-    document.getElementById(
-        'endView'
-    ).style.display =
-        'block';
+        let heading =
+            document.getElementById(
+                "endReasonTitle"
+            );
 
 
-    const heading =
-        document.getElementById(
-            'endReasonTitle'
-        );
+        let subText =
+            document.getElementById(
+                "neighborhoodSharedScore"
+            );
 
 
-    const subText =
-        document.getElementById(
-            'neighborhoodSharedScore'
-        );
+        let groupHappinessSum = 0;
 
 
-    let groupHappinessSum = 0;
+        players.forEach(p => {
 
-
-    players.forEach(
-        p => {
             groupHappinessSum +=
                 p.happiness;
+
+        });
+
+
+        if (condition === "blackout") {
+
+            heading.innerText =
+                "🚨 CRITICAL GRID FAILURE: BLACKOUT OCCURRED";
+
+
+            heading.style.color =
+                "var(--danger)";
+
+
+            let finalGroupScore =
+                groupHappinessSum -
+                50;
+
+
+            subText.innerHTML = `
+
+                Neighborhood baseline penalized
+                -50 due to system blackout failure.
+
+                <br><br>
+
+                <strong>
+                    Combined Neighborhood Score:
+                    ${finalGroupScore}
+                    Total Happiness Points
+                </strong>
+
+            `;
+
         }
-    );
+
+        else if (condition === "balanced") {
+
+            heading.innerText =
+                "⚖️ BALANCED GRID STABILIZATION ACHIEVED";
 
 
-    if(condition === 'blackout') {
-
-        heading.innerText =
-            "🚨 CRITICAL GRID FAILURE: BLACKOUT OCCURRED";
+            heading.style.color =
+                "var(--success)";
 
 
-        heading.style.color =
-            "var(--danger)";
+            subText.innerHTML = `
+
+                No components acquired for
+                4 consecutive rounds.
+                Network parameters stabilized perfectly.
+
+                <br><br>
+
+                <strong>
+                    Combined Neighborhood Score:
+                    ${groupHappinessSum}
+                    Total Happiness Points
+                </strong>
+
+            `;
+
+        }
+
+        else {
+
+            heading.innerText =
+                "🏁 GAME COMPLETED: TIME LIMIT CONCLUDED";
 
 
-        const finalGroupScore =
-            groupHappinessSum - 50;
+            heading.style.color =
+                "var(--primary)";
 
 
-        subText.innerHTML = `
+            subText.innerHTML = `
 
-            Neighborhood baseline penalized -50
-            due to system blackout failure.
+                Operational time constraints reached.
 
-            <br><br>
+                <br><br>
 
-            <strong>
-                Combined Neighborhood Score:
-                ${finalGroupScore}
-                Total Happiness Points
-            </strong>
+                <strong>
+                    Combined Neighborhood Score:
+                    ${groupHappinessSum}
+                    Total Happiness Points
+                </strong>
 
-        `;
+            `;
 
-    }
-
-
-    else if(condition === 'balanced') {
-
-        heading.innerText =
-            "⚖️ BALANCED GRID STABILIZATION ACHIEVED";
+        }
 
 
-        heading.style.color =
-            "var(--success)";
+        let podium =
+            document.getElementById(
+                "finalScoreboardPodium"
+            );
 
 
-        subText.innerHTML = `
-
-            No components acquired for 4 consecutive rounds.
-            Network parameters stabilized perfectly.
-
-            <br><br>
-
-            <strong>
-                Combined Neighborhood Score:
-                ${groupHappinessSum}
-                Total Happiness Points
-            </strong>
-
-        `;
-
-    }
+        podium.innerHTML = "";
 
 
-    else {
-
-        heading.innerText =
-            "🏁 GAME COMPLETED: TIME LIMIT CONCLUDED";
-
-
-        heading.style.color =
-            "var(--primary)";
-
-
-        subText.innerHTML = `
-
-            Operational time constraints reached.
-
-            <br><br>
-
-            <strong>
-                Combined Neighborhood Score:
-                ${groupHappinessSum}
-                Total Happiness Points
-            </strong>
-
-        `;
-
-    }
+        let ranked =
+            [...players]
+                .sort(
+                    (a, b) =>
+                        b.happiness -
+                        a.happiness
+                );
 
 
-    const podium =
-        document.getElementById(
-            'finalScoreboardPodium'
-        );
+        ranked.forEach((p, i) => {
 
-
-    podium.innerHTML = "";
-
-
-    const ranked =
-        [...players].sort(
-            (a,b) =>
-                b.happiness -
-                a.happiness
-        );
-
-
-    ranked.forEach(
-        (p,i) => {
-
-            const row =
+            let row =
                 document.createElement(
-                    'div'
+                    "div"
                 );
 
 
             row.style.padding =
                 "12px";
 
+
             row.style.background =
                 "#0f172a";
+
 
             row.style.border =
                 "1px solid var(--border)";
 
+
             row.style.marginBottom =
                 "8px";
+
 
             row.style.borderRadius =
                 "6px";
@@ -2789,7 +2539,7 @@ function forceEndGame(condition) {
             row.innerHTML = `
 
                 <strong>
-                    #${i+1} ${p.name}
+                    #${i + 1} ${p.name}
                 </strong>
 
                 &mdash;
@@ -2814,14 +2564,11 @@ function forceEndGame(condition) {
             `;
 
 
-            podium.appendChild(
-                row
-            );
+            podium.appendChild(row);
 
-        }
-    );
+        });
 
-}
+    }
 
 </script>
 
