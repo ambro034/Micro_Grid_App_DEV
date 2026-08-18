@@ -524,19 +524,29 @@
     </div>
 
 
-    <!-- ==========================================
-         STEP 1: NEIGHBORHOOD INITIALIZATION PORTAL
-         ========================================== -->
+     <!-- =====================================================
+         STEP 1: INITIALIZATION
+         ===================================================== -->
 
-    <div id="setupView" class="setup-box">
+    <div
+        id="setupView"
+        class="setup-box">
 
-        <h3>Neighborhood Initialization Portal</h3>
+        <h3>
+            Neighborhood Initialization Portal
+        </h3>
 
-        <p style="color: var(--text-muted);
-                  margin-top:-10px;
-                  font-size:0.9rem;">
+
+        <p style="
+            color: var(--text-muted);
+            margin-top:-10px;
+            font-size:0.9rem;
+        ">
+
             Register the neighbors currently sitting at your table.
-            Turn rotation shifts left automatically each round.
+            Then choose whether to establish the grid parameters
+            manually or randomize them.
+
         </p>
 
 
@@ -544,173 +554,206 @@
 
         <div class="flex-row">
 
-            <input type="text"
-                   id="pNameInput"
-                   placeholder="Neighbor Name...">
+            <input
+                type="text"
+                id="pNameInput"
+                placeholder="Neighbor Name...">
 
             <button onclick="registerNeighbor()">
+
                 Add Neighbor
+
             </button>
 
         </div>
 
-        <div id="interimList"
-             style="margin-top:15px;
-                    font-size:0.9rem;
-                    color:var(--text-muted);">
+
+        <div
+            id="interimList"
+            style="
+                margin-top:15px;
+                font-size:0.9rem;
+                color:var(--text-muted);
+            ">
         </div>
 
 
-        <!-- GAME SETTINGS -->
+        <!-- GAME PARAMETER SETUP -->
 
         <div class="setup-section">
 
-            <h3 style="margin-top:0;">
-                Grid Configuration
-            </h3>
+            <h4>
+                ⚙️ Grid Parameter Setup
+            </h4>
 
-            <p style="color:var(--text-muted);
-                      font-size:0.9rem;">
-                Choose whether the grid parameters will be set by the
-                players or randomized by the system.
+
+            <p style="
+                color:var(--text-muted);
+                font-size:0.9rem;
+            ">
+
+                Players may establish the grid parameters
+                themselves or allow the system to randomly
+                generate them.
+
             </p>
 
 
-            <div class="setup-option">
+            <div class="mode-buttons">
 
-                <input type="radio"
-                       id="manualMode"
-                       name="gridMode"
-                       value="manual"
-                       checked
-                       onchange="toggleGridMode()">
+                <button
+                    id="manualModeButton"
+                    class="mode-button selected"
+                    onclick="setSetupMode('manual')">
 
-                <label for="manualMode">
-                    <strong>Manual Configuration</strong>
-                    — Players determine the grid parameters.
-                </label>
+                    ✏️ Set Parameters Manually
 
-            </div>
+                </button>
 
 
-            <div class="setup-option">
+                <button
+                    id="randomModeButton"
+                    class="mode-button"
+                    onclick="setSetupMode('random')">
 
-                <input type="radio"
-                       id="randomMode"
-                       name="gridMode"
-                       value="random"
-                       onchange="toggleGridMode()">
+                    🎲 Randomize Parameters
 
-                <label for="randomMode">
-                    <strong>Randomized Configuration</strong>
-                    — The system randomly determines the grid parameters.
-                </label>
+                </button>
 
             </div>
 
 
-            <!-- MANUAL SETTINGS -->
+            <!-- MANUAL SETUP -->
 
-            <div id="manualSettings"
-                 class="manual-settings">
+            <div id="manualSetup">
 
-                <div class="setting-row">
+                <div class="setup-grid">
 
-                    <div class="setting-item">
+                    <div class="setup-field">
 
-                        <label for="initialCapacity">
-                            Initial Grid Capacity (30–50 electrons)
+                        <label>
+                            Initial Grid Capacity
+                            (30–50 electrons)
                         </label>
 
-                        <input type="number"
-                               id="initialCapacity"
-                               min="30"
-                               max="50"
-                               value="50">
+                        <input
+                            type="number"
+                            id="initialCapacityInput"
+                            min="30"
+                            max="50"
+                            value="50">
 
                     </div>
 
 
-                    <div class="setting-item">
+                    <div class="setup-field">
 
-                        <label for="brownoutLimit">
-                            Brownouts Before Blackout (1–6)
+                        <label>
+                            Brownouts Before Blackout
+                            (1–6)
                         </label>
 
-                        <input type="number"
-                               id="brownoutLimit"
-                               min="1"
-                               max="6"
-                               value="4"
-                               onchange="updateBrownoutCapacityInputs()">
+                        <input
+                            type="number"
+                            id="brownoutLimitInput"
+                            min="1"
+                            max="6"
+                            value="4"
+                            onchange="generateBrownoutCapacityInputs()">
 
                     </div>
 
                 </div>
 
 
-                <div style="margin-top:18px;">
+                <div style="
+                    margin-top:20px;
+                    font-weight:bold;
+                ">
 
-                    <label style="font-size:0.85rem;
-                                  color:var(--text-muted);
-                                  font-weight:bold;">
-
-                        CAPACITY ADDED AFTER EACH BROWNOUT
-                        (5–15 electrons)
-
-                    </label>
-
-                    <div id="brownoutCapacityInputs"
-                         class="brownout-capacity-grid">
-                    </div>
+                    Capacity Added After Each Brownout
 
                 </div>
 
-            </div>
 
+                <p style="
+                    color:var(--text-muted);
+                    font-size:0.8rem;
+                ">
 
-            <!-- RANDOM MODE DESCRIPTION -->
-
-            <div id="randomSettings"
-                 style="display:none;
-                        margin-top:15px;
-                        padding:15px;
-                        background:#1e293b;
-                        border-radius:8px;
-                        border:1px solid var(--border);">
-
-                <strong style="color:var(--primary);">
-                    🎲 Randomized Grid
-                </strong>
-
-                <p style="color:var(--text-muted);
-                          font-size:0.85rem;
-                          margin-bottom:0;">
-
-                    The system will randomly determine the initial
-                    capacity, number of brownouts before blackout,
-                    and capacity increase following each brownout.
-
-                    These values will not be revealed to players
-                    during gameplay.
+                    Set the number of additional electrons added
+                    after each brownout. Each value must be
+                    between 5 and 15 electrons.
 
                 </p>
+
+
+                <div
+                    id="brownoutCapacityInputs"
+                    class="brownout-inputs">
+                </div>
+
+            </div>
+
+
+            <!-- RANDOM SETUP -->
+
+            <div
+                id="randomSetup"
+                style="display:none;">
+
+                <div class="random-info">
+
+                    🎲 <strong>Randomized Grid Parameters</strong>
+
+                    <br><br>
+
+                    The system will randomly determine:
+
+                    <ul>
+
+                        <li>
+                            Initial capacity:
+                            <strong>30–50 electrons</strong>
+                        </li>
+
+                        <li>
+                            Number of brownouts before blackout:
+                            <strong>1–6</strong>
+                        </li>
+
+                        <li>
+                            Capacity added after each brownout:
+                            <strong>5–15 electrons</strong>
+                        </li>
+
+                    </ul>
+
+                    <strong>
+                        Note:
+                    </strong>
+
+                    Grid capacity and the brownout limit will
+                    remain hidden from players during gameplay.
+
+                </div>
 
             </div>
 
         </div>
 
 
-        <!-- START BUTTON -->
+        <!-- START GAME -->
 
-        <div class="flex-row"
-             style="margin-top:15px;">
+        <div class="flex-row" style="margin-top:20px;">
 
-            <button class="action-btn"
-                    onclick="commenceGridSimulation()"
-                    style="width:100%;
-                           background:var(--primary);
-                           color:#0b0f19;">
+            <button
+                onclick="commenceGridSimulation()"
+                style="
+                    width:100%;
+                    background:var(--primary);
+                    color:#0b0f19;
+                ">
 
                 Start Grid Manager Operations &rarr;
 
@@ -719,7 +762,6 @@
         </div>
 
     </div>
-
 
     <!-- ==========================================
          STEP 2: MAIN GRID MANAGER
