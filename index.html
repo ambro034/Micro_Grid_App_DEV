@@ -1865,7 +1865,19 @@ let state = {
 
     randomized:false,
 
-    upgradeRequired:false
+    upgradeRequired:false,
+
+    /* ========================================================
+       SOLAR PANEL SPECIAL TURN STATE
+       ======================================================== */
+
+    solarPanelSpecialTurn:false,
+
+    solarPanelEligiblePlayers:[],
+
+    solarPanelTurnIndex:0,
+
+    normalTurnReturnIndex:-1
 
 };
 
@@ -3046,10 +3058,263 @@ function evaluateSystemDemand() {
 
 
 /* ============================================================
+   SOLAR PANEL SPECIAL TURN
+   ============================================================ */
+
+function getSolarPanelEligiblePlayers() {
+
+    return players
+        .map((p,index)=>{
+
+            return {
+
+                playerIndex:index,
+
+                cash:p.cash
+
+            };
+
+        })
+        .filter(entry =>
+            entry.cash >= 2000
+        );
+
+}
+
+
+/* ============================================================
+   START SOLAR PANEL-ONLY TURN SEQUENCE
+   ============================================================ */
+
+async function startSolarPanelOnlyTurns() {
+
+    const eligiblePlayers =
+        getSolarPanelEligiblePlayers();
+
+
+    if(eligiblePlayers.length === 0) {
+
+        return;
+
+    }
+
+
+    state.normalTurnReturnIndex =
+        state.activePlayerIdx;
+
+
+    state.solarPanelEligiblePlayers =
+        eligiblePlayers.map(
+            entry=>entry.playerIndex
+        );
+
+
+    state.solarPanelTurnIndex = 0;
+
+    state.solarPanelSpecialTurn = true;
+
+
+    appendLog(
+        `☀️ Solar Panel special turn activated. ` +
+        `${state.solarPanelEligiblePlayers.length} eligible player(s) will receive a Solar Panel-only turn.`
+    );
+
+
+    state.activePlayerIdx =
+        state.solarPanelEligiblePlayers[
+            state.solarPanelTurnIndex
+        ];
+
+
+    updateUserInterface();
+
+
+    await showMessage(
+
+        "☀️ Solar Panel Purchase Opportunity",
+
+        `
+
+        <div class="modal-event success">
+
+            <strong>
+                Solar Panel purchasing is now available.
+            </strong>
+
+            <br><br>
+
+            Every player with
+            <strong>$2,000 or more in Wallet Cash</strong>
+            will receive one special Solar Panel-only turn.
+
+        </div>
+
+
+        <div style="
+            margin-top:15px;
+            color:var(--text-muted);
+            font-size:0.85rem;">
+
+            During these special turns:
+
+            <ul style="
+                margin-top:8px;
+                padding-left:20px;">
+
+                <li>
+                    Only Solar Panel cards may be purchased.
+                </li>
+
+                <li>
+                    Goods cards are temporarily removed from the gameplay panel.
+                </li>
+
+                <li>
+                    Players may choose
+                    <strong>No purchase this Turn</strong>.
+                </li>
+
+            </ul>
+
+        </div>
+
+        `,
+
+        "☀️",
+
+        "Begin Solar Panel Turns"
+
+    );
+
+}
+
+
+/* ============================================================
+   ADVANCE SOLAR PANEL SPECIAL TURN
+   ============================================================ */
+
+async function advanceSolarPanelTurn() {
+
+    if(!state.solarPanelSpecialTurn) {
+
+        return;
+
+    }
+
+
+    state.solarPanelTurnIndex += 1;
+
+
+    if(
+        state.solarPanelTurnIndex >=
+        state.solarPanelEligiblePlayers.length
+    ) {
+
+        const returnIndex =
+            state.normalTurnReturnIndex;
+
+
+        state.solarPanelSpecialTurn = false;
+
+        state.solarPanelEligiblePlayers = [];
+
+        state.solarPanelTurnIndex = 0;
+
+        state.normalTurnReturnIndex = -1;
+
+
+        state.activePlayerIdx =
+            returnIndex;
+
+
+        appendLog(
+            `☀️ Solar Panel special turns complete. ` +
+            `Returning to the normal gameplay position.`
+        );
+
+
+        updateUserInterface();
+
+
+        /*
+         * The capacity upgrade is still required.
+         * Reopen the same Grid Capacity Upgrade decision
+         * from the exact point where the special turns began.
+         */
+
+        if(state.upgradeRequired) {
+
+            await applyGridUpgrade();
+
+        }
+
+
+        return;
+
+    }
+
+
+    state.activePlayerIdx =
+        state.solarPanelEligiblePlayers[
+            state.solarPanelTurnIndex
+        ];
+
+
+    appendLog(
+        `☀️ ${players[state.activePlayerIdx].name} is now taking their Solar Panel-only turn.`
+    );
+
+
+    updateUserInterface();
+
+}
+
+
+/* ============================================================
    NO PURCHASE
    ============================================================ */
 
 async function noPurchase(pIdx) {
+
+    /*
+     * Special Solar Panel-only turns bypass the normal
+     * grid-upgrade restriction and do not trigger the
+     * Finish for This Round pop-up.
+     */
+
+    if(state.solarPanelSpecialTurn) {
+
+        if(
+            pIdx !== state.activePlayerIdx
+        ) {
+
+            return;
+
+        }
+
+
+        const p =
+            players[pIdx];
+
+
+        if(!p) {
+
+            return;
+
+        }
+
+
+        appendLog(
+            `${p.name} chose not to purchase a Solar Panel this special turn.`
+        );
+
+
+        await advanceSolarPanelTurn();
+
+        return;
+
+    }
+
 
     if(state.upgradeRequired) {
 
@@ -3298,7 +3563,15 @@ async function buyCard(
     cardIndex
 ) {
 
-    if(state.upgradeRequired) {
+    /*
+     * The normal upgrade restriction does not apply during
+     * the Solar Panel-only special turn.
+     */
+
+    if(
+        state.upgradeRequired &&
+        !state.solarPanelSpecialTurn
+    ) {
 
         await showMessage(
             "Grid Upgrade Required",
@@ -3317,8 +3590,33 @@ async function buyCard(
 
     if(
         !p ||
-        pIdx !== state.activePlayerIdx ||
+        pIdx !== state.activePlayerIdx
+    ) {
+
+        return;
+
+    }
+
+
+    if(
+        !state.solarPanelSpecialTurn &&
         p.finishedThisRound
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * During the Solar Panel-only sequence, Goods cards
+     * cannot be purchased even if the function is called
+     * directly.
+     */
+
+    if(
+        state.solarPanelSpecialTurn &&
+        cardType !== "blue"
     ) {
 
         return;
@@ -3513,6 +3811,21 @@ async function buyCard(
     if(!confirmed) return;
 
 
+    /*
+     * Recheck the special-turn restriction after the
+     * confirmation modal closes.
+     */
+
+    if(
+        state.solarPanelSpecialTurn &&
+        cardType !== "blue"
+    ) {
+
+        return;
+
+    }
+
+
     card.quantity -= 1;
 
     state.anyPurchases = true;
@@ -3613,14 +3926,6 @@ async function buyCard(
             updateUserInterface();
 
 
-            /* ====================================================
-               CHANGED:
-               The Grid Capacity Upgrade pop-up now appears
-               immediately after the Brownout pop-up.
-               The Finish for This Round pop-up is handled by
-               applyGridUpgrade() after the upgrade is approved.
-               ==================================================== */
-
             await showBrownoutEvent(
                 p,
                 state.brownouts,
@@ -3659,6 +3964,23 @@ async function buyCard(
 
 
         evaluateSystemDemand();
+
+    }
+
+
+    /*
+     * Solar Panel-only turns have their own turn progression.
+     * They do not alter the normal round order and do not
+     * trigger the normal Finish for This Round prompt.
+     */
+
+    if(state.solarPanelSpecialTurn) {
+
+        updateUserInterface();
+
+        await advanceSolarPanelTurn();
+
+        return;
 
     }
 
@@ -3918,23 +4240,82 @@ async function applyGridUpgrade() {
     `;
 
 
-    const confirmed =
-        await showConfirmation(
+    /*
+     * Determine whether the Solar Panel option should appear.
+     * This is checked when the Grid Capacity Upgrade pop-up
+     * is opened.
+     */
 
-            "Grid Capacity Upgrade",
-
-            upgradeMessage,
-
-            "🔧",
-
-            "Approve Upgrade",
-
-            "purple"
-
-        );
+    const solarEligiblePlayers =
+        getSolarPanelEligiblePlayers();
 
 
-    if(!confirmed) return;
+    const upgradeButtons = [];
+
+
+    if(solarEligiblePlayers.length > 0) {
+
+        upgradeButtons.push({
+
+            text:"Purchase Solar Panel",
+
+            className:"primary",
+
+            value:"solar"
+
+        });
+
+    }
+
+
+    /*
+     * Cancel has intentionally been removed.
+     * The player must either start the Solar Panel opportunity
+     * when eligible or approve the required grid upgrade.
+     */
+
+    upgradeButtons.push({
+
+        text:"Approve Upgrade",
+
+        className:"purple",
+
+        value:"upgrade"
+
+    });
+
+
+    const choice =
+        await openGameModal({
+
+            title:
+                "Grid Capacity Upgrade",
+
+            body:
+                upgradeMessage,
+
+            icon:"🔧",
+
+            buttons:
+                upgradeButtons
+
+        });
+
+
+    if(choice === "solar") {
+
+        await startSolarPanelOnlyTurns();
+
+        return;
+
+    }
+
+
+    if(choice !== "upgrade") {
+
+        return;
+
+    }
 
 
     state.capacity +=
@@ -3983,14 +4364,11 @@ async function applyGridUpgrade() {
     updateUserInterface();
 
 
-    /* ============================================================
-       CHANGED:
-       After the capacity upgrade is approved, immediately show
-       the current player's Finish for This Round? pop-up.
-       If this is the last unfinished participant, selecting
-       Finish for This Round will immediately trigger the existing
-       round-settlement pop-up.
-       ============================================================ */
+    /*
+     * After the capacity upgrade is approved, immediately show
+     * the current player's Finish for This Round? pop-up.
+     * This preserves the existing behavior.
+     */
 
     if(state.activePlayerIdx !== -1) {
 
@@ -4422,7 +4800,22 @@ function updateUserInterface() {
         let turnBadge;
 
 
-        if(isFinished) {
+        if(
+            state.solarPanelSpecialTurn &&
+            isCurrentTurn
+        ) {
+
+            turnBadge = `
+
+                <span class="turn-badge active">
+                    ☀️ Solar Panel Turn
+                </span>
+
+            `;
+
+        }
+
+        else if(isFinished) {
 
             turnBadge = `
 
@@ -4453,6 +4846,320 @@ function updateUserInterface() {
                 <span class="turn-badge">
                     Waiting
                 </span>
+
+            `;
+
+        }
+
+
+        /*
+         * SPECIAL SOLAR PANEL-ONLY TURN
+         */
+
+        let gameplayPanel;
+
+
+        if(
+            state.solarPanelSpecialTurn &&
+            isCurrentTurn
+        ) {
+
+            gameplayPanel = `
+
+                <div class="card-selection">
+
+                    <div class="modal-event success"
+                         style="margin-bottom:15px;">
+
+                        <strong>
+                            ☀️ Solar Panel-only Turn
+                        </strong>
+
+                        <br><br>
+
+                        This special turn is for purchasing
+                        Solar Panel cards only.
+
+                        <br><br>
+
+                        <span style="
+                            color:var(--text-muted);
+                            font-size:0.85rem;">
+
+                            Goods cards are unavailable during
+                            this special turn.
+
+                        </span>
+
+                    </div>
+
+
+                    <button
+                        class="no-purchase-button"
+                        onclick="noPurchase(${idx})">
+
+                        ⏭️ No purchase this Turn
+
+                    </button>
+
+
+                    <h4>
+                        ☀️ Choose a Solar Panel Card
+                    </h4>
+
+
+                    <div class="card-options">
+
+                        ${
+                            solarPanelCards.map(
+                                (c,i)=>`
+
+                                <button
+                                    class="game-card solar"
+
+                                    ${
+                                        c.quantity<=0 ||
+                                        p.cash<c.price
+                                            ? "disabled"
+                                            : ""
+                                    }
+
+                                    onclick="
+                                        buyCard(
+                                            ${idx},
+                                            'blue',
+                                            ${i}
+                                        )
+                                    ">
+
+                                    <div class="game-card-price">
+                                        $${c.price.toLocaleString()}
+                                    </div>
+
+                                    <div class="game-card-details">
+                                        ⚡ +${c.electrons}e<br>
+                                        😊 +${c.happiness}
+                                    </div>
+
+                                    <div class="card-count">
+
+                                        ${c.quantity}
+                                        card${
+                                            c.quantity===1
+                                                ? ""
+                                                : "s"
+                                        }
+                                        remaining
+
+                                    </div>
+
+                                </button>
+
+                            `
+                            ).join("")
+                        }
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+        else if(
+            isCurrentTurn &&
+            !isFinished
+        ) {
+
+            /*
+             * NORMAL GAMEPLAY TURN
+             */
+
+            gameplayPanel = `
+
+                <div class="card-selection">
+
+                    <button
+                        class="no-purchase-button"
+                        onclick="noPurchase(${idx})"
+                        ${
+                            state.upgradeRequired
+                                ? "disabled"
+                                : ""
+                        }>
+
+                        ⏭️ No purchase this Turn
+
+                    </button>
+
+
+                    <h4>
+                        🛒 Choose a Goods Card
+                    </h4>
+
+
+                    <div class="card-options">
+
+                        ${
+                            goodsCards.map(
+                                (c,i)=>`
+
+                                <button
+                                    class="game-card goods"
+
+                                    ${
+                                        c.quantity<=0 ||
+                                        p.cash<c.price ||
+                                        state.upgradeRequired
+                                            ? "disabled"
+                                            : ""
+                                    }
+
+                                    onclick="
+                                        buyCard(
+                                            ${idx},
+                                            'yellow',
+                                            ${i}
+                                        )
+                                    ">
+
+                                    <div class="game-card-price">
+                                        $${c.price.toLocaleString()}
+                                    </div>
+
+                                    <div class="game-card-details">
+                                        ⚡ ${c.electrons}e<br>
+                                        😊 +${c.happiness}
+                                    </div>
+
+                                    <div class="card-count">
+
+                                        ${c.quantity}
+                                        card${
+                                            c.quantity===1
+                                                ? ""
+                                                : "s"
+                                        }
+                                        remaining
+
+                                    </div>
+
+                                </button>
+
+                            `
+                            ).join("")
+                        }
+
+                    </div>
+
+
+                    <h4 style="margin-top:20px;">
+                        ☀️ Choose a Solar Panel Card
+                    </h4>
+
+
+                    <div class="card-options">
+
+                        ${
+                            solarPanelCards.map(
+                                (c,i)=>`
+
+                                <button
+                                    class="game-card solar"
+
+                                    ${
+                                        c.quantity<=0 ||
+                                        p.cash<c.price ||
+                                        state.upgradeRequired
+                                            ? "disabled"
+                                            : ""
+                                    }
+
+                                    onclick="
+                                        buyCard(
+                                            ${idx},
+                                            'blue',
+                                            ${i}
+                                        )
+                                    ">
+
+                                    <div class="game-card-price">
+                                        $${c.price.toLocaleString()}
+                                    </div>
+
+                                    <div class="game-card-details">
+                                        ⚡ +${c.electrons}e<br>
+                                        😊 +${c.happiness}
+                                    </div>
+
+                                    <div class="card-count">
+
+                                        ${c.quantity}
+                                        card${
+                                            c.quantity===1
+                                                ? ""
+                                                : "s"
+                                        }
+                                        remaining
+
+                                    </div>
+
+                                </button>
+
+                            `
+                            ).join("")
+                        }
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+        else {
+
+            gameplayPanel = `
+
+                <div style="
+                    color:var(--text-muted);
+                    text-align:center;
+                    padding:15px;">
+
+                    ${
+                        state.solarPanelSpecialTurn
+
+                            ? (
+                                state.solarPanelEligiblePlayers
+                                    .includes(idx)
+
+                                    ? "☀️ Waiting for this player's Solar Panel-only turn."
+
+                                    : "This player does not qualify for the Solar Panel-only turn."
+                              )
+
+                            : isFinished
+
+                                ? "✓ This player has finished for this round."
+
+                                : state.upgradeRequired
+
+                                    ? "Grid upgrade required before the next player can take their turn."
+
+                                    : state.activePlayerIdx === -1
+
+                                        ? "All players have finished this round."
+
+                                        : `Waiting for ${
+                                            players[
+                                                state.activePlayerIdx
+                                            ].name
+                                        } to complete their turn.`
+                    }
+
+                </div>
 
             `;
 
@@ -4529,182 +5236,7 @@ function updateUserInterface() {
             </div>
 
 
-            ${
-                isCurrentTurn &&
-                !isFinished
-
-                ? `
-
-                    <div class="card-selection">
-
-                        <button
-                            class="no-purchase-button"
-                            onclick="noPurchase(${idx})"
-                            ${
-                                state.upgradeRequired
-                                    ? "disabled"
-                                    : ""
-                            }>
-
-                            ⏭️ No purchase this Turn
-
-                        </button>
-
-
-                        <h4>
-                            🛒 Choose a Goods Card
-                        </h4>
-
-
-                        <div class="card-options">
-
-                            ${
-                                goodsCards.map(
-                                    (c,i)=>`
-
-                                    <button
-                                        class="game-card goods"
-
-                                        ${
-                                            c.quantity<=0 ||
-                                            p.cash<c.price ||
-                                            state.upgradeRequired
-                                                ? "disabled"
-                                                : ""
-                                        }
-
-                                        onclick="
-                                            buyCard(
-                                                ${idx},
-                                                'yellow',
-                                                ${i}
-                                            )
-                                        ">
-
-                                        <div class="game-card-price">
-                                            $${c.price.toLocaleString()}
-                                        </div>
-
-                                        <div class="game-card-details">
-                                            ⚡ ${c.electrons}e<br>
-                                            😊 +${c.happiness}
-                                        </div>
-
-                                        <div class="card-count">
-
-                                            ${c.quantity}
-                                            card${
-                                                c.quantity===1
-                                                    ? ""
-                                                    : "s"
-                                            }
-                                            remaining
-
-                                        </div>
-
-                                    </button>
-
-                                `
-                                ).join("")
-                            }
-
-                        </div>
-
-
-                        <h4 style="margin-top:20px;">
-                            ☀️ Choose a Solar Panel Card
-                        </h4>
-
-
-                        <div class="card-options">
-
-                            ${
-                                solarPanelCards.map(
-                                    (c,i)=>`
-
-                                    <button
-                                        class="game-card solar"
-
-                                        ${
-                                            c.quantity<=0 ||
-                                            p.cash<c.price ||
-                                            state.upgradeRequired
-                                                ? "disabled"
-                                                : ""
-                                        }
-
-                                        onclick="
-                                            buyCard(
-                                                ${idx},
-                                                'blue',
-                                                ${i}
-                                            )
-                                        ">
-
-                                        <div class="game-card-price">
-                                            $${c.price.toLocaleString()}
-                                        </div>
-
-                                        <div class="game-card-details">
-                                            ⚡ +${c.electrons}e<br>
-                                            😊 +${c.happiness}
-                                        </div>
-
-                                        <div class="card-count">
-
-                                            ${c.quantity}
-                                            card${
-                                                c.quantity===1
-                                                    ? ""
-                                                    : "s"
-                                            }
-                                            remaining
-
-                                        </div>
-
-                                    </button>
-
-                                `
-                                ).join("")
-                            }
-
-                        </div>
-
-                    </div>
-
-                `
-
-                : `
-
-                    <div style="
-                        color:var(--text-muted);
-                        text-align:center;
-                        padding:15px;">
-
-                        ${
-                            isFinished
-
-                                ? "✓ This player has finished for this round."
-
-                                : state.upgradeRequired
-
-                                    ? "Grid upgrade required before the next player can take their turn."
-
-                                    : state.activePlayerIdx === -1
-
-                                        ? "All players have finished this round."
-
-                                        : `Waiting for ${
-                                            players[
-                                                state.activePlayerIdx
-                                            ].name
-                                        } to complete their turn.`
-                        }
-
-                    </div>
-
-                `
-            }
+            ${gameplayPanel}
 
 
             <button
@@ -4827,7 +5359,24 @@ function updateUserInterface() {
     }
 
 
-    if(allPlayersFinished()) {
+    if(state.solarPanelSpecialTurn) {
+
+        const currentSolarPlayer =
+            players[
+                state.activePlayerIdx
+            ];
+
+
+        document.getElementById(
+            "turnTrackingText"
+        ).innerText =
+            currentSolarPlayer
+                ? `☀️ Solar Panel-only turn: ${currentSolarPlayer.name}`
+                : "☀️ Solar Panel-only turn active.";
+
+    }
+
+    else if(allPlayersFinished()) {
 
         document.getElementById(
             "turnTrackingText"
@@ -4866,6 +5415,15 @@ function updateUserInterface() {
    ============================================================ */
 
 function forceEndGame(condition) {
+
+    state.solarPanelSpecialTurn = false;
+
+    state.solarPanelEligiblePlayers = [];
+
+    state.solarPanelTurnIndex = 0;
+
+    state.normalTurnReturnIndex = -1;
+
 
     document.getElementById(
         "managerView"
