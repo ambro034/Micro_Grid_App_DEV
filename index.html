@@ -3099,6 +3099,26 @@ async function startSolarPanelOnlyTurns() {
     }
 
 
+    /*
+     * During the Solar Panel-only turn sequence,
+     * all players who qualify for the sequence must
+     * have finishedThisRound set to false.
+     *
+     * Players with $1,999 or less will receive the
+     * existing darker finished-style container through
+     * the UI logic below, without changing their actual
+     * finishedThisRound value.
+     */
+
+    eligiblePlayers.forEach(entry => {
+
+        players[
+            entry.playerIndex
+        ].finishedThisRound = false;
+
+    });
+
+
     state.normalTurnReturnIndex =
         state.activePlayerIdx;
 
@@ -4768,6 +4788,20 @@ function updateUserInterface() {
             p.finishedThisRound;
 
 
+        /*
+         * During the Solar Panel-only sequence, players
+         * with $1,999 or less receive the same darker
+         * container styling as a finished player.
+         *
+         * This is visual only. It does NOT change
+         * p.finishedThisRound.
+         */
+
+        const isSolarPanelLowCash =
+            state.solarPanelSpecialTurn &&
+            p.cash <= 1999;
+
+
         const card =
             document.createElement("div");
 
@@ -4775,11 +4809,13 @@ function updateUserInterface() {
         card.className =
             `player-card ${
                 isCurrentTurn &&
-                !isFinished
+                !isFinished &&
+                !isSolarPanelLowCash
                     ? "active-turn"
                     : ""
             } ${
-                isFinished
+                isFinished ||
+                isSolarPanelLowCash
                     ? "finished-round"
                     : ""
             }`;
